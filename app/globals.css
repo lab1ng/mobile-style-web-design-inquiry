@@ -161,3 +161,88 @@
     @apply bg-background text-foreground;
   }
 }
+
+@theme inline {
+  --font-sans: var(--font-noto-kr), system-ui, sans-serif;
+  --color-naver: #03c75a;
+}
+
+@keyframes count-pop {
+  0% { transform: scale(1.8); opacity: 0; filter: blur(8px); }
+  25% { transform: scale(1); opacity: 1; filter: blur(0); }
+  80% { transform: scale(0.95); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0; }
+}
+
+@keyframes glitch-shake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-6px, 2px) skewX(4deg); }
+  20% { transform: translate(5px, -3px); }
+  30% { transform: translate(-3px, 4px) skewX(-6deg); }
+  40% { transform: translate(7px, 0); }
+  50% { transform: translate(-5px, -2px); }
+  60% { transform: translate(3px, 3px) skewX(3deg); }
+  70% { transform: translate(-7px, 1px); }
+  80% { transform: translate(4px, -4px); }
+  90% { transform: translate(-2px, 2px) skewX(-2deg); }
+}
+
+@keyframes glitch-bars {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  8% { opacity: 0.2; }
+  12% { opacity: 1; }
+  45% { opacity: 0.85; }
+  47% { opacity: 0.1; }
+  50% { opacity: 1; }
+  78% { opacity: 0.4; }
+  80% { opacity: 1; }
+}
+
+@keyframes crt-off {
+  0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); }
+  50% { transform: scale(1, 0.006); opacity: 1; filter: brightness(3); }
+  80% { transform: scale(0.2, 0.006); opacity: 1; }
+  100% { transform: scale(0, 0); opacity: 0; }
+}
+
+@keyframes boot-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes slow-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.15); }
+}
+
+.animate-count-pop { animation: count-pop 1s ease-out forwards; }
+.animate-glitch-shake { animation: glitch-shake 0.25s steps(2) infinite; }
+.animate-glitch-bars { animation: glitch-bars 0.9s linear infinite; }
+.animate-flicker { animation: flicker 0.6s steps(1) infinite; }
+.animate-crt-off { animation: crt-off 0.7s ease-in forwards; }
+.animate-boot-progress { animation: boot-progress 2.2s ease-in-out forwards; transform-origin: left; }
+.animate-slow-zoom { animation: slow-zoom 6s ease-out forwards; }
+
+.scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.06) 0px,
+    rgb(255 255 255 / 0.06) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-glitch-shake, .animate-glitch-bars, .animate-flicker, .animate-slow-zoom {
+    animation: none;
+  }
+}
