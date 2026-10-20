@@ -1,4 +1,7 @@
-import { Play, Search } from 'lucide-react'
+'use client'
+
+import { useState } from 'react'
+import { ArrowLeft, Play, Search, X } from 'lucide-react'
 import Image from 'next/image'
 import type { Timeline } from '@/lib/timelines'
 import { AppBody } from '../app-shell'
@@ -9,16 +12,25 @@ type Props = {
 }
 
 export function NaverApp({ timeline, onPlayVideo }: Props) {
-  const { video, news } = timeline.naver
+  const { video, news, searches } = timeline.naver
+  const [searching, setSearching] = useState(false)
+
+  if (searching) {
+    return <RecentSearches searches={searches} onClose={() => setSearching(false)} />
+  }
 
   return (
     <div className="flex h-full flex-col">
       <header className="shrink-0 px-4 pt-1 pb-3">
         <p className="text-2xl font-black text-naver">NAVER</p>
-        <div className="mt-3 flex h-12 items-center gap-2 rounded-full border-2 border-naver px-4">
+        <button
+          type="button"
+          onClick={() => setSearching(true)}
+          className="mt-3 flex h-12 w-full items-center gap-2 rounded-full border-2 border-naver px-4 text-left active:bg-white/5"
+        >
           <Search className="size-5 text-naver" aria-hidden="true" />
           <span className="text-base text-neutral-500">검색어를 입력해 주세요.</span>
-        </div>
+        </button>
       </header>
 
       <AppBody className="flex flex-col gap-6 px-4 pb-6">
@@ -62,6 +74,53 @@ export function NaverApp({ timeline, onPlayVideo }: Props) {
             ))}
           </ul>
         </section>
+      </AppBody>
+    </div>
+  )
+}
+
+function RecentSearches({
+  searches,
+  onClose,
+}: {
+  searches: Timeline['naver']['searches']
+  onClose: () => void
+}) {
+  return (
+    <div className="flex h-full flex-col">
+      <header className="flex h-14 shrink-0 items-center gap-1 border-b-2 border-naver pr-3 pl-1">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="검색 닫기"
+          className="flex size-11 items-center justify-center rounded-full active:bg-white/10"
+        >
+          <ArrowLeft className="size-6" />
+        </button>
+        <span className="flex-1 text-base text-neutral-500">검색어 또는 URL 입력</span>
+        <Search className="size-6 text-naver" strokeWidth={2.6} aria-hidden="true" />
+      </header>
+
+      <AppBody className="pb-6">
+        {searches.length === 0 ? (
+          <p className="px-5 pt-10 text-center text-sm text-neutral-500">최근 검색어가 없습니다.</p>
+        ) : (
+          <>
+            <h2 className="px-5 pt-4 pb-1 text-sm font-bold text-neutral-400">최근 검색어</h2>
+            <ul>
+              {searches.map((s) => (
+                <li key={s.term} className="flex h-14 items-center gap-3 px-5">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-800">
+                    <Search className="size-4 text-neutral-400" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-[16px]">{s.term}</span>
+                  <span className="text-sm text-neutral-500 tabular-nums">{s.date}</span>
+                  <X className="size-4 text-neutral-500" aria-hidden="true" />
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </AppBody>
     </div>
   )

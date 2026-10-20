@@ -48,7 +48,7 @@ export function HomeScreen({ timeline, hidden, onOpenApp }: Props) {
           <AppIcon app={APPS.photos} onClick={onOpenApp} />
           <AppIcon app={APPS.ebsi} onClick={onOpenApp} />
           <AppIcon app={APPS.memo} onClick={onOpenApp} />
-          <AppIcon app={APPS.todo} onClick={onOpenApp} />
+          <AppIcon app={APPS.clock} onClick={onOpenApp} />
           <CalendarIcon weekday={weekday} day={day} onClick={() => onOpenApp('calendar')} />
         </div>
       </div>
@@ -60,7 +60,7 @@ export function HomeScreen({ timeline, hidden, onOpenApp }: Props) {
         <AppIcon app={APPS.phone} onClick={onOpenApp} hideLabel />
         <AppIcon app={APPS.messages} onClick={onOpenApp} hideLabel />
         <AppIcon app={APPS.naver} onClick={onOpenApp} hideLabel />
-        <AppIcon app={APPS.kakao} onClick={onOpenApp} hideLabel />
+        <AppIcon app={APPS.music} onClick={onOpenApp} hideLabel />
       </nav>
     </div>
   )

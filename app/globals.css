@@ -226,7 +226,13 @@
 .animate-flicker { animation: flicker 0.6s steps(1) infinite; }
 .animate-crt-off { animation: crt-off 0.7s ease-in forwards; }
 .animate-boot-progress { animation: boot-progress 2.2s ease-in-out forwards; transform-origin: left; }
-.animate-slow-zoom { animation: slow-zoom 6s ease-out forwards; }
+  .animate-slow-zoom { animation: slow-zoom 6s ease-out forwards; }
+
+  @keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+  }
+  .animate-ticker { animation: ticker 14s linear infinite; }
 
 .scanlines {
   background-image: repeating-linear-gradient(
