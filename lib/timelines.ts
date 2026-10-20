@@ -7,11 +7,21 @@ export type Conversation = {
 }
 export type Photo = { id: string; src: string; alt: string; date: string }
 export type Memo = { id: string; title: string; body: string; updated: string }
+export type Contact = { id: string; name: string; label: string }
 export type Call = {
   id: string
   name: string
+  /** 이름 아래 작은 글씨 (휴대전화, 대한민국 등) */
+  subtitle: string
   time: string
   type: 'incoming' | 'outgoing' | 'missed'
+  count?: number
+}
+export type PhoneData = {
+  favorites: Contact[]
+  recents: Call[]
+  /** 키패드 숫자를 꾹 누르면 연결되는 연락처 id */
+  speedDial: Record<string, string>
 }
 export type NewsItem = { id: string; title: string; source: string }
 export type NaverVideo = { title: string; thumbnail: string; duration: string }
@@ -26,7 +36,7 @@ export type Timeline = {
   messages: Conversation[]
   photos: Photo[]
   memos: Memo[]
-  calls: Call[]
+  phone: PhoneData
   naver: {
     news: NewsItem[]
     /** 영상이 있으면 누를 때 새해 카운트다운 → 오류 → 재부팅이 시작됩니다 */
@@ -83,11 +93,21 @@ export const TIMELINES: Timeline[] = [
         updated: '2024.11.02',
       },
     ],
-    calls: [
-      { id: 'c1', name: '엄마', time: '오후 8:03', type: 'incoming' },
-      { id: 'c2', name: '지민', time: '오후 6:47', type: 'outgoing' },
-      { id: 'c3', name: '알 수 없음', time: '오전 3:22', type: 'missed' },
-    ],
+    phone: {
+      favorites: [{ id: 'suho', name: '안수호', label: '휴대전화' }],
+      speedDial: { '1': 'suho' },
+      recents: [
+        { id: 'c1', name: '선강대병원', subtitle: '대한민국', time: '오후 11:21', type: 'missed' },
+        { id: 'c2', name: '박후민', subtitle: '휴대전화', time: '오후 10:48', type: 'outgoing' },
+        { id: 'c3', name: '070-274X-622X', subtitle: '대한민국', time: '오후 7:15', type: 'incoming' },
+        { id: 'c4', name: '수호할머니', subtitle: '휴대전화', time: '오후 5:32', type: 'incoming' },
+        { id: 'c5', name: '서준태', subtitle: '휴대전화', time: '오후 2:04', type: 'outgoing' },
+        { id: 'c6', name: '박후민', subtitle: '휴대전화', time: '오전 11:40', type: 'incoming' },
+        { id: 'c7', name: '고현탁', subtitle: '휴대전화', time: '어제', type: 'incoming' },
+        { id: 'c8', name: '070-876X-688X', subtitle: '대한민국', time: '어제', type: 'incoming' },
+        { id: 'c9', name: '금성제', subtitle: '휴대전화', time: '일요일', type: 'missed' },
+      ],
+    },
     naver: {
       video: {
         title: '2024 마지막 순간, 함께 새해를 맞이해요',
@@ -115,7 +135,7 @@ export const TIMELINES: Timeline[] = [
     messages: [],
     photos: [],
     memos: [],
-    calls: [],
+    phone: { favorites: [], recents: [], speedDial: {} },
     naver: {
       news: [
         { id: 'n1', title: '전국 대체로 맑음, 낮 최고 28도 초여름 더위', source: '연합뉴스' },

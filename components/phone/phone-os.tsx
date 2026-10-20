@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { getTimeline, TIMELINES } from '@/lib/timelines'
+import { getTimeline, TIMELINES, type Contact } from '@/lib/timelines'
+import { SwipeBack } from './swipe-back'
+import { CallScreen } from './call-screen'
+import type { PlacedCall } from './apps/phone-app'
 import { StatusBar } from './status-bar'
 import { HomeScreen } from './home-screen'
 import { SequenceOverlay, type Sequence } from './sequence-overlay'
@@ -18,8 +21,25 @@ export function PhoneOS() {
   const [timelineId, setTimelineId] = useState(TIMELINES[0].id)
   const [openApp, setOpenApp] = useState<AppId | null>(null)
   const [sequence, setSequence] = useState<Sequence | null>(null)
+  const [activeCall, setActiveCall] = useState<Contact | null>(null)
+  const [placedCalls, setPlacedCalls] = useState<Record<string, PlacedCall[]>>({})
 
   const timeline = getTimeline(timelineId)
+
+  const endCall = () => {
+    if (!activeCall) return
+    const contactId = activeCall.id
+    setPlacedCalls((prev) => {
+      const list = prev[timelineId] ?? []
+      const [first, ...rest] = list
+      const next =
+        first?.contactId === contactId
+          ? [{ ...first, count: first.count + 1 }, ...rest]
+          : [{ contactId, count: 1 }, ...list]
+      return { ...prev, [timelineId]: next }
+    })
+    setActiveCall(null)
+  }
 
   const travel = (targetId: string, withCountdown: boolean) => {
     setSequence({ targetId, withCountdown, key: Date.now() })
@@ -34,7 +54,13 @@ export function PhoneOS() {
       case 'memo':
         return <MemoApp timeline={timeline} />
       case 'phone':
-        return <PhoneApp timeline={timeline} />
+        return (
+          <PhoneApp
+            timeline={timeline}
+            placedCalls={placedCalls[timelineId] ?? []}
+            onCall={setActiveCall}
+          />
+        )
       case 'naver':
         return (
           <NaverApp
@@ -72,15 +98,23 @@ export function PhoneOS() {
       <HomeScreen timeline={timeline} onOpenApp={setOpenApp} hidden={isAppOpen} />
 
       {isAppOpen && (
-        <div
+        <SwipeBack
           key={openApp}
-          className="absolute inset-0 z-10 flex flex-col bg-neutral-950 animate-in fade-in zoom-in-90 duration-300"
+          onBack={() => setOpenApp(null)}
+          disabled={activeCall !== null || sequence !== null}
+          className="absolute inset-0 z-10"
         >
-          <div className="h-12 shrink-0" />
-          <div className="relative min-h-0 flex-1">{renderApp()}</div>
-          <div className="h-8 shrink-0" />
-        </div>
+          <div
+            className={`flex h-full flex-col animate-in fade-in zoom-in-90 duration-300 ${openApp === 'phone' ? 'bg-black' : 'bg-neutral-950'}`}
+          >
+            <div className="h-12 shrink-0" />
+            <div className="relative min-h-0 flex-1">{renderApp()}</div>
+            <div className="h-8 shrink-0" />
+          </div>
+        </SwipeBack>
       )}
+
+      {activeCall && <CallScreen contact={activeCall} onEnd={endCall} />}
 
       <StatusBar time={timeline.time} />
 
@@ -88,7 +122,7 @@ export function PhoneOS() {
         type="button"
         onClick={() => setOpenApp(null)}
         aria-label="홈으로"
-        disabled={!isAppOpen}
+        disabled={!isAppOpen || activeCall !== null}
         className="absolute bottom-0 left-1/2 z-30 flex h-8 w-44 -translate-x-1/2 items-center justify-center disabled:pointer-events-none"
       >
         <span className="h-1.5 w-32 rounded-full bg-white/80" />
