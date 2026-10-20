@@ -13,7 +13,7 @@ export function PhotosApp({ timeline }: { timeline: Timeline }) {
   if (photo) {
     return (
       <div className="flex h-full flex-col bg-black animate-in fade-in zoom-in-95 duration-200">
-        <AppHeader title={photo.date} onBack={() => setOpenId(null)} backLabel="사진" />
+        <AppHeader title="" onBack={() => setOpenId(null)} backLabel="사진" />
         <div className="relative min-h-0 flex-1">
           <Image src={photo.src} alt={photo.alt} fill sizes="390px" className="object-contain" />
         </div>
@@ -36,7 +36,7 @@ export function PhotosApp({ timeline }: { timeline: Timeline }) {
                     type="button"
                     onClick={() => setOpenId(p.id)}
                     className="relative block aspect-square w-full overflow-hidden active:opacity-70"
-                    aria-label={`${p.date} 사진 보기`}
+                    aria-label={`${p.alt} 사진 보기`}
                   >
                     <Image src={p.src} alt={p.alt} fill sizes="130px" className="object-cover" />
                   </button>

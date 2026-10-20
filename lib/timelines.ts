@@ -19,7 +19,14 @@ export type Conversation = {
   color: string
   messages: Message[]
 }
-export type Photo = { id: string; src: string; alt: string; date: string }
+export type Photo = { id: string; src: string; alt: string }
+
+const SHARED_PHOTOS: Photo[] = [
+  { id: 'shared-01', src: '/images/photos/shared-01.jpg', alt: '밤에 난간에 기대 휴대폰을 보는 청록색 트레이닝복 차림의 수호' },
+  { id: 'shared-02', src: '/images/photos/shared-02.jpg', alt: '밤에 아파트 복도에서 도시 야경을 보며 휴대폰을 든 교복 차림의 수호' },
+  { id: 'shared-03', src: '/images/photos/shared-03.jpg', alt: '카페 테이블에서 파란 후드티를 입고 브이를 하는 수호' },
+  { id: 'shared-04', src: '/images/photos/shared-04.jpg', alt: '교실 책상에서 분홍 베개를 베고 잠든 수호' },
+]
 export type Memo = { id: string; title: string; body: string; updated: string }
 export type Contact = { id: string; name: string; label: string }
 export type Track = { id: string; title: string; artist: string; cover: string }
@@ -102,10 +109,11 @@ export const TIMELINES: Timeline[] = [
     wallpaper: '/images/wallpaper-2024.jpg',
     messages: MESSAGES_2024,
     photos: [
-      { id: 'p2024-01', src: '/images/photos/2024-01.jpg', alt: '밤에 야외 테라스에서 친구 넷이 찍은 셀카', date: '2024.12.28' },
-      { id: 'p2024-02', src: '/images/photos/2024-02.jpg', alt: '한복 의상을 입고 궁궐 배경 앞에서 찍은 단체 셀카', date: '2024.12.21' },
-      { id: 'p2024-03', src: '/images/photos/2024-03.jpg', alt: '교복 입은 친구들과 방 안에서 찍은 셀카', date: '2024.12.14' },
-      { id: 'p2024-04', src: '/images/photos/2024-04.jpg', alt: '농구장 앞에서 응원 피켓을 든 친구 넷', date: '2024.12.07' },
+      { id: 'p2024-01', src: '/images/photos/2024-01.jpg', alt: '밤에 야외 테라스에서 친구 넷이 찍은 셀카' },
+      { id: 'p2024-02', src: '/images/photos/2024-02.jpg', alt: '한복 의상을 입고 궁궐 배경 앞에서 찍은 단체 셀카' },
+      { id: 'p2024-03', src: '/images/photos/2024-03.jpg', alt: '교복 입은 친구들과 방 안에서 찍은 셀카' },
+      { id: 'p2024-04', src: '/images/photos/2024-04.jpg', alt: '농구장 앞에서 응원 피켓을 든 친구 넷' },
+      ...SHARED_PHOTOS,
     ],
     memos: [
       {
@@ -178,7 +186,7 @@ export const TIMELINES: Timeline[] = [
     time: '14:20',
     wallpaper: '/images/wallpaper-2022.jpg',
     messages: MESSAGES_2022,
-    photos: [],
+    photos: [...SHARED_PHOTOS],
     memos: [
       {
         id: 'm3',
