@@ -21,6 +21,7 @@ export function SwipeBack({
   const start = useRef<{ x: number; y: number; id: number } | null>(null)
   const swiping = useRef(false)
   const suppressClick = useRef(false)
+  const offsetRef = useRef(0)
   const [offset, setOffset] = useState(0)
   const [dragging, setDragging] = useState(false)
 
@@ -45,12 +46,17 @@ export function SwipeBack({
       if (dx > START_THRESHOLD && dx > Math.abs(dy) * 1.2) {
         swiping.current = true
         setDragging(true)
-        ref.current?.setPointerCapture(e.pointerId)
+        try {
+          ref.current?.setPointerCapture(e.pointerId)
+        } catch {
+          // Pointer may already be released (e.g. fast flick); swipe still works without capture.
+        }
       } else {
         return
       }
     }
-    setOffset(Math.max(0, dx - START_THRESHOLD))
+    offsetRef.current = Math.max(0, dx - START_THRESHOLD)
+    setOffset(offsetRef.current)
   }
 
   const handlePointerEnd = () => {
@@ -60,12 +66,13 @@ export function SwipeBack({
     suppressClick.current = true
     setDragging(false)
     const width = ref.current?.offsetWidth ?? 390
-    if (offset > width * CLOSE_RATIO) {
+    if (offsetRef.current > width * CLOSE_RATIO) {
       setOffset(width)
       window.setTimeout(onBack, 180)
     } else {
       setOffset(0)
     }
+    offsetRef.current = 0
   }
 
   return (
