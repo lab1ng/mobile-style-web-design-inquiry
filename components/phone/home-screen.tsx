@@ -44,10 +44,12 @@ export function HomeScreen({ timeline, hidden, onOpenApp }: Props) {
         </section>
 
         <div className="mt-12 grid grid-cols-4 gap-x-4 gap-y-6">
-          <CalendarIcon weekday={weekday} day={day} onClick={() => onOpenApp('calendar')} />
-          <AppIcon app={APPS.memo} onClick={onOpenApp} />
-          <AppIcon app={APPS.naver} onClick={onOpenApp} />
+          <AppIcon app={APPS.instagram} onClick={onOpenApp} />
           <AppIcon app={APPS.photos} onClick={onOpenApp} />
+          <AppIcon app={APPS.ebsi} onClick={onOpenApp} />
+          <AppIcon app={APPS.memo} onClick={onOpenApp} />
+          <AppIcon app={APPS.todo} onClick={onOpenApp} />
+          <CalendarIcon weekday={weekday} day={day} onClick={() => onOpenApp('calendar')} />
         </div>
       </div>
 
@@ -57,6 +59,8 @@ export function HomeScreen({ timeline, hidden, onOpenApp }: Props) {
       >
         <AppIcon app={APPS.phone} onClick={onOpenApp} hideLabel />
         <AppIcon app={APPS.messages} onClick={onOpenApp} hideLabel />
+        <AppIcon app={APPS.naver} onClick={onOpenApp} hideLabel />
+        <AppIcon app={APPS.kakao} onClick={onOpenApp} hideLabel />
       </nav>
     </div>
   )
@@ -87,7 +91,9 @@ function AppIcon({
         {app.icon}
       </span>
       {!hideLabel && (
-        <span className="text-xs font-medium text-white drop-shadow">{app.name}</span>
+        <span className="whitespace-nowrap text-center text-xs font-medium tracking-tight text-white drop-shadow">
+          {app.name}
+        </span>
       )}
     </button>
   )

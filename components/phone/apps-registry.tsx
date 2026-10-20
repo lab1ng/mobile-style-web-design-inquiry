@@ -1,7 +1,17 @@
-import { Images, MessageCircle, NotebookPen, Phone } from 'lucide-react'
+import { Camera, Images, ListChecks, MessageCircle, MessageSquare, NotebookPen, Phone } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-export type AppId = 'messages' | 'photos' | 'memo' | 'phone' | 'naver' | 'calendar'
+export type AppId =
+  | 'instagram'
+  | 'photos'
+  | 'ebsi'
+  | 'memo'
+  | 'todo'
+  | 'calendar'
+  | 'phone'
+  | 'messages'
+  | 'naver'
+  | 'kakao'
 
 export type AppDef = {
   id: AppId
@@ -11,11 +21,11 @@ export type AppDef = {
 }
 
 export const APPS: Record<Exclude<AppId, 'calendar'>, AppDef> = {
-  messages: {
-    id: 'messages',
-    name: '메시지',
-    className: 'bg-gradient-to-b from-[#5ef77a] to-[#1ec33f]',
-    icon: <MessageCircle className="size-8 fill-white text-white" />,
+  instagram: {
+    id: 'instagram',
+    name: 'Instagram',
+    className: 'bg-gradient-to-tr from-[#feda75] via-[#d62976] to-[#4f5bd5]',
+    icon: <Camera className="size-8 text-white" strokeWidth={2.2} />,
   },
   photos: {
     id: 'photos',
@@ -23,11 +33,23 @@ export const APPS: Record<Exclude<AppId, 'calendar'>, AppDef> = {
     className: 'bg-white',
     icon: <Images className="size-8 text-orange-500" strokeWidth={2.2} />,
   },
+  ebsi: {
+    id: 'ebsi',
+    name: 'EBSi 고교강의',
+    className: 'bg-gradient-to-b from-[#3b82f6] to-[#1d4ed8]',
+    icon: <span className="text-lg font-black leading-none tracking-tight text-white">EBSi</span>,
+  },
   memo: {
     id: 'memo',
     name: '메모',
     className: 'bg-gradient-to-b from-[#fde68a] to-[#facc15]',
     icon: <NotebookPen className="size-7 text-amber-900" strokeWidth={2.2} />,
+  },
+  todo: {
+    id: 'todo',
+    name: '투두리스트',
+    className: 'bg-gradient-to-b from-[#34d399] to-[#059669]',
+    icon: <ListChecks className="size-8 text-white" strokeWidth={2.2} />,
   },
   phone: {
     id: 'phone',
@@ -35,10 +57,22 @@ export const APPS: Record<Exclude<AppId, 'calendar'>, AppDef> = {
     className: 'bg-gradient-to-b from-[#5ef77a] to-[#1ec33f]',
     icon: <Phone className="size-7 fill-white text-white" />,
   },
+  messages: {
+    id: 'messages',
+    name: '문자',
+    className: 'bg-gradient-to-b from-[#5ef77a] to-[#1ec33f]',
+    icon: <MessageSquare className="size-7 fill-white text-white" />,
+  },
   naver: {
     id: 'naver',
     name: 'NAVER',
     className: 'bg-naver',
     icon: <span className="text-3xl font-black leading-none text-white">N</span>,
+  },
+  kakao: {
+    id: 'kakao',
+    name: '카카오톡',
+    className: 'bg-[#fee500]',
+    icon: <MessageCircle className="size-8 fill-[#3c1e1e] text-[#3c1e1e]" />,
   },
 }

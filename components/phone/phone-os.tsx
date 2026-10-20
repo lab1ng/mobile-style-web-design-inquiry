@@ -5,7 +5,8 @@ import { getTimeline, TIMELINES } from '@/lib/timelines'
 import { StatusBar } from './status-bar'
 import { HomeScreen } from './home-screen'
 import { SequenceOverlay, type Sequence } from './sequence-overlay'
-import type { AppId } from './apps-registry'
+import { APPS, type AppId } from './apps-registry'
+import { PlaceholderApp } from './apps/placeholder-app'
 import { MessagesApp } from './apps/messages-app'
 import { PhotosApp } from './apps/photos-app'
 import { MemoApp } from './apps/memo-app'
@@ -49,6 +50,11 @@ export function PhoneOS() {
             onTravel={(targetId) => travel(targetId, false)}
           />
         )
+      case 'instagram':
+      case 'ebsi':
+      case 'todo':
+      case 'kakao':
+        return <PlaceholderApp app={APPS[openApp]} />
       default:
         return null
     }
