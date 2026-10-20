@@ -26,6 +26,10 @@ const SHARED_PHOTOS: Photo[] = [
   { id: 'shared-02', src: '/images/photos/shared-02.jpg', alt: '밤에 아파트 복도에서 도시 야경을 보며 휴대폰을 든 교복 차림의 수호' },
   { id: 'shared-03', src: '/images/photos/shared-03.jpg', alt: '카페 테이블에서 파란 후드티를 입고 브이를 하는 수호' },
   { id: 'shared-04', src: '/images/photos/shared-04.jpg', alt: '교실 책상에서 분홍 베개를 베고 잠든 수호' },
+ { id: 'shared-05', src: '/images/photos/shared-05.jpg', alt: '병실에서 깁스한 팔로 얼굴을 가린 환자복 차림의 수호와 옆에 선 교복 차림의 친구' },
+ { id: 'shared-06', src: '/images/photos/shared-06.jpg', alt: '담쟁이 덮인 벽돌담 앞에서 빨간 티셔츠 위에 교복 셔츠를 걸치고 윙크하는 수호' },
+ { id: 'shared-07', src: '/images/photos/shared-07.jpg', alt: '교실 책상 위 분홍 베개에 엎드려 잠든 교복 차림의 수호와 옆에 놓인 휴대폰' },
+ { id: 'shared-08', src: '/images/photos/shared-08.jpg', alt: '밤에 헬멧을 쓰고 버스 앞에서 셀카를 찍는 수호와 버스 창가의 친구' },
 ]
 export type Memo = { id: string; title: string; body: string; updated: string }
 export type Contact = { id: string; name: string; label: string }
@@ -222,7 +226,7 @@ export const TIMELINES: Timeline[] = [
     },
     naver: {
       news: [
-        { id: 'n1', title: '전국 폭염특보 확대… 낮 최고 35도 안팎 무더위', source: '연합뉴스' },
+        { id: 'n1', title: '전국 폭염특보 ���대… 낮 최고 35도 안팎 무더위', source: '연합뉴스' },
         { id: 'n2', title: '열대야 사흘째, 밤에도 25도 이상… 온열질환 주의', source: 'YTN' },
         { id: 'n3', title: '장마 소강 뒤 다시 비… 주말 중부지방 집중호우 예보', source: 'KBS' },
         { id: 'n4', title: '자외선 지수 \'매우 높음\', 한낮 야외활동 자제해야', source: '한겨레' },
