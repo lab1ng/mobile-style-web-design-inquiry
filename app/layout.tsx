@@ -10,7 +10,7 @@ const notoSansKr = Noto_Sans_KR({
 })
 
 export const metadata: Metadata = {
-  title: '그날의 폰',
+  title: '시은의 폰',
   description: '2024년 12월 31일, 그리고 2022년 7월 13일. 시간을 거슬러 가는 인터랙티브 핸드폰.',
   generator: 'v0.app',
   manifest: '/manifest.json',
