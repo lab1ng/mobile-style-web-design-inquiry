@@ -1,6 +1,13 @@
 import { buildSchedule2024 } from './calendar-schedule'
+import { MESSAGES_2024 } from './messages-2024'
 
-export type Message = { from: 'me' | 'them'; text: string; time: string }
+export type Message = {
+  from: 'me' | 'them'
+  text: string
+  /** YYYY-MM-DD */
+  date: string
+  time?: string
+}
 export type Conversation = {
   id: string
   name: string
@@ -60,29 +67,7 @@ export const TIMELINES: Timeline[] = [
     label: '1차',
     time: '23:59',
     wallpaper: '/images/wallpaper-2024.png',
-    messages: [
-      {
-        id: 'mom',
-        name: '엄마',
-        color: '#f97316',
-        messages: [
-          { from: 'them', text: '오늘 몇 시에 들어와?', time: '오후 9:12' },
-          { from: 'me', text: '친구들이랑 카운트다운 보고 갈게', time: '오후 9:20' },
-          { from: 'them', text: '조심히 와. 새해 복 많이 받아', time: '오후 11:41' },
-        ],
-      },
-      {
-        id: 'friend',
-        name: '지민',
-        color: '#8b5cf6',
-        messages: [
-          { from: 'them', text: '야 2024년 진짜 끝이다', time: '오후 11:50' },
-          { from: 'me', text: '올해 진짜 별일 다 있었다', time: '오후 11:52' },
-          { from: 'them', text: '내년엔 좀 평화롭게 살자', time: '오후 11:53' },
-          { from: 'me', text: '그러게. 근데 왠지 이상한 느낌이 들어', time: '오후 11:58' },
-        ],
-      },
-    ],
+    messages: MESSAGES_2024,
     photos: [
       { id: 'p1', src: '/images/photo-winter.png', alt: '전구로 장식된 눈 내린 골목', date: '2024.12.24' },
       { id: 'p2', src: '/images/photo-cafe.png', alt: '카페 테이블 위 라떼와 케이크', date: '2024.12.28' },
