@@ -31,6 +31,28 @@ const SHARED_PHOTOS: Photo[] = [
  { id: 'shared-07', src: '/images/photos/shared-07.jpg', alt: '교실 책상 위 분홍 베개에 엎드려 잠든 교복 차림의 수호와 옆에 놓인 휴대폰' },
  { id: 'shared-08', src: '/images/photos/shared-08.jpg', alt: '밤에 헬멧을 쓰고 버스 앞에서 셀카를 찍는 수호와 버스 창가의 친구' },
 ]
+
+export type PhotoAlbum = {
+  id: string
+  name: string
+  photos: Photo[]
+  /** 있으면 4자리 암호를 입력해야 열립니다 */
+  passcode?: string
+  /** 가려진 항목처럼 표지 사진 대신 아이콘으로 표시 */
+  hidden?: boolean
+}
+
+const WING_PHOTO: Photo = {
+  id: 'shared-09',
+  src: '/images/photos/shared-09.jpg',
+  alt: '햇살 드는 교실에서 카메라 쪽으로 몸을 기울인 시은과 뒤 책상에 앉은 수호',
+}
+const CLASSROOM_NIGHT_PHOTO: Photo = {
+  id: 'shared-10',
+  src: '/images/photos/shared-10.jpg',
+  alt: '저녁 교실에서 교복 차림으로 앉아 브이를 하는 친구 셋',
+}
+const WING_ALBUM: PhotoAlbum = { id: 'wing', name: '🪽', photos: [WING_PHOTO], passcode: '0709' }
 export type Memo = { id: string; title: string; body: string; updated: string }
 export type Contact = { id: string; name: string; label: string }
 export type Track = { id: string; title: string; artist: string; cover: string }
@@ -67,7 +89,8 @@ export type Timeline = {
   time: string
   wallpaper: string
   messages: Conversation[]
-  photos: Photo[]
+  /** 첫 번째 앨범이 기본 앨범(최근 항목) */
+  albums: PhotoAlbum[]
   memos: Memo[]
   music: { createdAt: string; tracks: Track[] }
   phone: PhoneData
@@ -112,12 +135,20 @@ export const TIMELINES: Timeline[] = [
     time: '23:59',
     wallpaper: '/images/wallpaper-2024.jpg',
     messages: MESSAGES_2024,
-    photos: [
-      { id: 'p2024-01', src: '/images/photos/2024-01.jpg', alt: '밤에 야외 테라스에서 친구 넷이 찍은 셀카' },
-      { id: 'p2024-02', src: '/images/photos/2024-02.jpg', alt: '한복 의상을 입고 궁궐 배경 앞에서 찍은 단체 셀카' },
-      { id: 'p2024-03', src: '/images/photos/2024-03.jpg', alt: '교복 입은 친구들과 방 안에서 찍은 셀카' },
-      { id: 'p2024-04', src: '/images/photos/2024-04.jpg', alt: '농구장 앞에서 응원 피켓을 든 친구 넷' },
-      ...SHARED_PHOTOS,
+    albums: [
+      {
+        id: 'recents',
+        name: '최근 항목',
+        photos: [
+          { id: 'p2024-01', src: '/images/photos/2024-01.jpg', alt: '밤에 야외 테라스에서 친구 넷이 찍은 셀카' },
+          { id: 'p2024-02', src: '/images/photos/2024-02.jpg', alt: '한복 의상을 입고 궁궐 배경 앞에서 찍은 단체 셀카' },
+          { id: 'p2024-03', src: '/images/photos/2024-03.jpg', alt: '교복 입은 친구들과 방 안에서 찍은 셀카' },
+          { id: 'p2024-04', src: '/images/photos/2024-04.jpg', alt: '농구장 앞에서 응원 피켓을 든 친구 넷' },
+          ...SHARED_PHOTOS,
+        ],
+      },
+      WING_ALBUM,
+      { id: 'hidden', name: '가려진 항목', photos: [CLASSROOM_NIGHT_PHOTO], hidden: true },
     ],
     memos: [
       {
@@ -190,7 +221,7 @@ export const TIMELINES: Timeline[] = [
     time: '14:20',
     wallpaper: '/images/wallpaper-2022.jpg',
     messages: MESSAGES_2022,
-    photos: [...SHARED_PHOTOS],
+    albums: [{ id: 'recents', name: '최근 항목', photos: [...SHARED_PHOTOS, CLASSROOM_NIGHT_PHOTO] }, WING_ALBUM],
     memos: [
       {
         id: 'm3',
