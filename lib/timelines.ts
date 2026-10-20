@@ -17,6 +17,7 @@ export type Conversation = {
 export type Photo = { id: string; src: string; alt: string; date: string }
 export type Memo = { id: string; title: string; body: string; updated: string }
 export type Contact = { id: string; name: string; label: string }
+export type Track = { id: string; title: string; artist: string; cover: string }
 export type Call = {
   id: string
   name: string
@@ -52,6 +53,7 @@ export type Timeline = {
   messages: Conversation[]
   photos: Photo[]
   memos: Memo[]
+  music: { createdAt: string; tracks: Track[] }
   phone: PhoneData
   naver: {
     news: NewsItem[]
@@ -76,17 +78,27 @@ export const TIMELINES: Timeline[] = [
     memos: [
       {
         id: 'm1',
-        title: '2025 목표',
-        body: '1. 운동 꾸준히 하기\n2. 책 20권 읽기\n3. 그날 일 다시 생각하지 않기',
+        title: '2025년 목표',
+        body: '1. 장학금 타기\n2. 운동 꾸준히 하기\n3. 책 열심히 읽기\n4. 바다 보러 가기 (수호랑)',
         updated: '2024.12.31',
       },
-      {
-        id: 'm2',
-        title: '2022.05.23',
-        body: '그날로 돌아갈 수만 있다면.',
-        updated: '2024.11.02',
-      },
+      { id: 'm2', title: '선강대학교병원 3203호', body: '', updated: '2024.12.31' },
+      { id: 'm3', title: '그 날로 돌아가고 싶어.', body: '', updated: '2024.12.31' },
     ],
+    music: {
+      createdAt: '2024.12.31 23:42',
+      tracks: [
+        { id: 't1', title: '우리가 영원을 말하면 여름이 될거야', artist: '최윤영', cover: '/images/albums/01.jpg' },
+        { id: 't2', title: '우우우린', artist: '윤지영', cover: '/images/albums/02.jpg' },
+        { id: 't3', title: 'Past Lives', artist: 'sapientdream, Slushii', cover: '/images/albums/03.jpg' },
+        { id: 't4', title: '선인장', artist: '김현창', cover: '/images/albums/04.jpg' },
+        { id: 't5', title: '눈이와도하늘을보지않아요', artist: '최윤영', cover: '/images/albums/05.jpg' },
+        { id: 't6', title: '유성', artist: '2단지', cover: '/images/albums/06.jpg' },
+        { id: 't7', title: '영원회귀', artist: '겸 (GYE0M)', cover: '/images/albums/07.jpg' },
+        { id: 't8', title: '우리의 마음은 한여름처럼 뜨겁지만', artist: '최윤영', cover: '/images/albums/08.jpg' },
+        { id: 't9', title: '그러나 우리가 사랑으로', artist: '나이트오프 (Night Off)', cover: '/images/albums/09.jpg' },
+      ],
+    },
     phone: {
       favorites: [{ id: 'suho', name: '안수호', label: '휴대전화' }],
       speedDial: { '1': 'suho' },
@@ -125,6 +137,7 @@ export const TIMELINES: Timeline[] = [
     messages: [],
     photos: [],
     memos: [],
+    music: { createdAt: '', tracks: [] },
     phone: { favorites: [], recents: [], speedDial: {} },
     naver: {
       news: [

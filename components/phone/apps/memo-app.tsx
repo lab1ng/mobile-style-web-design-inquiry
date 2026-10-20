@@ -40,7 +40,7 @@ export function MemoApp({ timeline }: { timeline: Timeline }) {
                   <span className="font-semibold">{m.title}</span>
                   <span className="truncate text-sm text-neutral-400">
                     <span className="mr-2 text-neutral-300">{m.updated}</span>
-                    {m.body.split('\n')[0]}
+                    {m.body ? m.body.split('\n')[0] : '추가 텍스트 없음'}
                   </span>
                 </button>
               </li>

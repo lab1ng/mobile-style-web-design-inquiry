@@ -16,6 +16,16 @@ import { MemoApp } from './apps/memo-app'
 import { PhoneApp } from './apps/phone-app'
 import { NaverApp } from './apps/naver-app'
 import { CalendarApp } from './apps/calendar-app'
+import { MusicApp } from './apps/music-app'
+import { ClockApp } from './apps/clock-app'
+import { EbsiApp } from './apps/ebsi-app'
+
+const APP_BACKGROUNDS: Partial<Record<AppId, string>> = {
+  phone: 'bg-black',
+  clock: 'bg-black',
+  ebsi: 'bg-white',
+  music: 'bg-gradient-to-b from-[#5b5b5f] via-[#2f2f31] to-[#141414]',
+}
 
 export function PhoneOS() {
   const [timelineId, setTimelineId] = useState(TIMELINES[0].id)
@@ -76,10 +86,13 @@ export function PhoneOS() {
             onTravel={(targetId) => travel(targetId, false)}
           />
         )
-      case 'instagram':
+      case 'music':
+        return <MusicApp timeline={timeline} />
+      case 'clock':
+        return <ClockApp timeline={timeline} />
       case 'ebsi':
-      case 'todo':
-      case 'kakao':
+        return <EbsiApp />
+      case 'instagram':
         return <PlaceholderApp app={APPS[openApp]} />
       default:
         return null
@@ -105,7 +118,7 @@ export function PhoneOS() {
           className="absolute inset-0 z-10"
         >
           <div
-            className={`flex h-full flex-col animate-in fade-in zoom-in-90 duration-300 ${openApp === 'phone' ? 'bg-black' : 'bg-neutral-950'}`}
+            className={`flex h-full flex-col animate-in fade-in zoom-in-90 duration-300 ${APP_BACKGROUNDS[openApp] ?? 'bg-neutral-950'}`}
           >
             <div className="h-12 shrink-0" />
             <div className="relative min-h-0 flex-1">{renderApp()}</div>
@@ -116,7 +129,7 @@ export function PhoneOS() {
 
       {activeCall && <CallScreen contact={activeCall} onEnd={endCall} />}
 
-      <StatusBar time={timeline.time} />
+      <StatusBar time={timeline.time} dark={openApp === 'ebsi' && !activeCall} />
 
       <button
         type="button"
@@ -125,7 +138,7 @@ export function PhoneOS() {
         disabled={!isAppOpen || activeCall !== null}
         className="absolute bottom-0 left-1/2 z-30 flex h-8 w-44 -translate-x-1/2 items-center justify-center disabled:pointer-events-none"
       >
-        <span className="h-1.5 w-32 rounded-full bg-white/80" />
+        <span className={`h-1.5 w-32 rounded-full ${openApp === 'ebsi' ? 'bg-neutral-900/80' : 'bg-white/80'}`} />
       </button>
 
       {sequence && (

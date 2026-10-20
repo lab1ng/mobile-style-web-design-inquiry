@@ -1,4 +1,4 @@
-import { Camera, Images, ListChecks, MessageCircle, MessageSquare, NotebookPen, Phone } from 'lucide-react'
+import { Camera, Clock, Images, MessageSquare, Music, NotebookPen, Phone } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 export type AppId =
@@ -6,12 +6,12 @@ export type AppId =
   | 'photos'
   | 'ebsi'
   | 'memo'
-  | 'todo'
+  | 'clock'
   | 'calendar'
   | 'phone'
   | 'messages'
   | 'naver'
-  | 'kakao'
+  | 'music'
 
 export type AppDef = {
   id: AppId
@@ -45,11 +45,11 @@ export const APPS: Record<Exclude<AppId, 'calendar'>, AppDef> = {
     className: 'bg-gradient-to-b from-[#fde68a] to-[#facc15]',
     icon: <NotebookPen className="size-7 text-amber-900" strokeWidth={2.2} />,
   },
-  todo: {
-    id: 'todo',
-    name: '투두리스트',
-    className: 'bg-gradient-to-b from-[#34d399] to-[#059669]',
-    icon: <ListChecks className="size-8 text-white" strokeWidth={2.2} />,
+  clock: {
+    id: 'clock',
+    name: '시계',
+    className: 'bg-black ring-1 ring-white/15',
+    icon: <Clock className="size-9 text-white" strokeWidth={1.8} />,
   },
   phone: {
     id: 'phone',
@@ -69,10 +69,10 @@ export const APPS: Record<Exclude<AppId, 'calendar'>, AppDef> = {
     className: 'bg-naver',
     icon: <span className="text-3xl font-black leading-none text-white">N</span>,
   },
-  kakao: {
-    id: 'kakao',
-    name: '카카오톡',
-    className: 'bg-[#fee500]',
-    icon: <MessageCircle className="size-8 fill-[#3c1e1e] text-[#3c1e1e]" />,
+  music: {
+    id: 'music',
+    name: '음악',
+    className: 'bg-gradient-to-b from-[#3ee65a] to-[#00b33c]',
+    icon: <Music className="size-8 text-white" strokeWidth={2.4} />,
   },
 }
