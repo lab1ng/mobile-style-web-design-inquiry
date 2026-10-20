@@ -99,12 +99,20 @@ export function StoryCallScreen({ contact, connected, script, onAnswer, onEnd }:
       <div className="flex flex-1 items-center justify-center px-8">
         {connected && line && (
           <div aria-live="polite" className="flex min-h-28 flex-col items-center gap-2 text-center">
-            <span className="text-[13px] font-medium text-white/50">{line.from === 'me' ? '나' : contact.name}</span>
-            {line.note && <span className="text-[15px] text-white/60">{`(${line.note})`}</span>}
             {line.text !== undefined && (
-              <p className="text-2xl font-medium leading-relaxed text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]">
+              <p
+                className={
+                  line.from === 'me'
+                    ? 'text-2xl font-semibold leading-relaxed text-black [text-shadow:0_0_14px_rgba(255,255,255,0.35)]'
+                    : 'text-2xl font-medium leading-relaxed text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]'
+                }
+              >
+                <span className="sr-only">{line.from === 'me' ? '나: ' : `${contact.name}: `}</span>
                 {typed}
-                <span className="ml-0.5 inline-block h-6 w-[2px] translate-y-1 animate-pulse bg-white/80" aria-hidden="true" />
+                <span
+                  className={`ml-0.5 inline-block h-6 w-[2px] translate-y-1 animate-pulse ${line.from === 'me' ? 'bg-black/80' : 'bg-white/80'}`}
+                  aria-hidden="true"
+                />
               </p>
             )}
           </div>

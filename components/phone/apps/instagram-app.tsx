@@ -182,11 +182,7 @@ function FollowingView({ profile, onBack }: { profile: InstagramProfile; onBack:
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 px-4 py-2 active:bg-white/10"
               >
-                <span className="rounded-full bg-gradient-to-tr from-[#feda75] via-[#d62976] to-[#4f5bd5] p-[2px]">
-                  <span className="block rounded-full border-2 border-[#0c1014]">
-                    <DefaultAvatar className="size-12" />
-                  </span>
-                </span>
+                <DefaultAvatar className="size-14 shrink-0" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[15px] font-semibold">{account.username}</span>
                   <span className="block truncate text-sm text-neutral-400">{account.name}</span>

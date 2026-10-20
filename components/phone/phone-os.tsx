@@ -44,7 +44,8 @@ export function PhoneOS() {
 
   const timeline = getTimeline(timelineId)
   const storyEnabled = timelineId === STORY_DATE
-  const story = useSuhoStory(storyEnabled && sequence === null)
+  const [viewingStoryChat, setViewingStoryChat] = useState(false)
+  const story = useSuhoStory(storyEnabled && sequence === null && openApp === 'messages' && viewingStoryChat)
   const suho = timeline.phone.favorites.find((c) => c.id === STORY_CONVO_ID) ?? {
     id: STORY_CONVO_ID,
     name: '안수호',
@@ -115,6 +116,7 @@ export function PhoneOS() {
                     choices: story.stage === 'choice' ? STORY_CHOICES : null,
                     composable: story.stage === 'stayed',
                     onOpen: story.open,
+                    onViewChange: setViewingStoryChat,
                     onChoose: story.choose,
                     onCompose: (text) => {
                       if (story.sendFailed(text)) setLastChance(true)

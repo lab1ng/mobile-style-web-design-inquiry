@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowUp, ChevronRight, CircleAlert, MessageCircle, Play } from 'lucide-react'
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useEffectEvent, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { Conversation, Message, Timeline } from '@/lib/timelines'
 import { AppBody, AppHeader, EmptyState } from '../app-shell'
@@ -61,6 +61,7 @@ export type MessagesStory = {
   choices: readonly string[] | null
   composable: boolean
   onOpen: () => void
+  onViewChange: (viewing: boolean) => void
   onChoose: (index: 0 | 1) => void
   onCompose: (text: string) => void
 }
@@ -163,6 +164,13 @@ export function MessagesApp({ timeline, story, initialOpenId }: Props) {
     if (id === story?.convoId) story.onOpen()
   }
 
+  const reportView = useEffectEvent((viewing: boolean) => story?.onViewChange(viewing))
+
+  useEffect(() => {
+    reportView(isStoryConvo)
+    return () => reportView(false)
+  }, [isStoryConvo])
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' })
   }, [convo?.messages.length, story?.typing, story?.choices])
@@ -190,8 +198,10 @@ export function MessagesApp({ timeline, story, initialOpenId }: Props) {
                   ) : (
                     <div className="flex max-w-[85%] items-center gap-1.5">
                       <p
+                        onClick={isStoryConvo && unreadId && i === convo.messages.length - 1 ? story?.onOpen : undefined}
                         className={cn(
                           'whitespace-pre-line break-all rounded-2xl px-3.5 py-2 text-[15px] leading-snug',
+                          isStoryConvo && unreadId && i === convo.messages.length - 1 && 'cursor-pointer',
                           isMe ? 'bg-sky-500 text-white' : 'bg-neutral-800 text-white',
                           !nextSameSide && (isMe ? 'rounded-br-md' : 'rounded-bl-md'),
                         )}

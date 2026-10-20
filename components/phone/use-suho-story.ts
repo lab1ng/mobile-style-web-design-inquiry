@@ -22,7 +22,7 @@ export const STORY_CONVO_ID = 'suho'
 export const STORY_CHOICES = ['어. 내일 보자', '안수호'] as const
 export const FAILED_SENDS_BEFORE_PROMPT = 3
 
-const ARRIVAL_DELAY = 20_000
+const ARRIVAL_DELAY = 15_000
 const BANNER_DURATION = 8_000
 const RING_DELAY = 1_200
 const CHAR_MS = 130
@@ -31,7 +31,7 @@ export const CALL_SCRIPT: CallLine[] = [
   { from: 'them', text: '어, 연시은' },
   { from: 'them', text: '여보세요? 연시은. 왜 말이 없냐' },
   { from: 'them', text: '뭐야. 잘못 받았나. 야 연시은-' },
-  { from: 'them', note: '한참 침묵', hold: 4500 },
+  { from: 'them', hold: 4500 },
   { from: 'them', text: '시은아' },
   { from: 'them', text: '뭔 일 있어?' },
   { from: 'me', text: '아니' },
