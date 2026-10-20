@@ -45,7 +45,11 @@ export function PhoneOS() {
   const timeline = getTimeline(timelineId)
   const storyEnabled = timelineId === STORY_DATE
   const [viewingStoryChat, setViewingStoryChat] = useState(false)
-  const story = useSuhoStory(storyEnabled && sequence === null && openApp === 'messages' && viewingStoryChat)
+  const [rewinding, setRewinding] = useState(false)
+  const story = useSuhoStory(
+    storyEnabled && sequence === null && openApp === 'messages' && viewingStoryChat,
+    storyEnabled && sequence === null && openApp === null,
+  )
   const suho = timeline.phone.favorites.find((c) => c.id === STORY_CONVO_ID) ?? {
     id: STORY_CONVO_ID,
     name: '안수호',
@@ -76,6 +80,7 @@ export function PhoneOS() {
 
   const rewind = () => {
     setLastChance(false)
+    setRewinding(true)
     travel(STORY_DATE, false)
   }
 
@@ -242,7 +247,8 @@ export function PhoneOS() {
             setOpenApp(null)
             setActiveCall(null)
             setMessagesFocus(undefined)
-            story.reset()
+            story.reset(rewinding && sequence.targetId === STORY_DATE)
+            setRewinding(false)
           }}
           onDone={() => setSequence(null)}
         />

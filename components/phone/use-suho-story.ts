@@ -23,6 +23,7 @@ export const STORY_CHOICES = ['어. 내일 보자', '안수호'] as const
 export const FAILED_SENDS_BEFORE_PROMPT = 3
 
 const ARRIVAL_DELAY = 15_000
+const REWOUND_ARRIVAL_DELAY = 5_000
 const BANNER_DURATION = 8_000
 const RING_DELAY = 1_200
 const CHAR_MS = 130
@@ -44,7 +45,6 @@ export const CALL_SCRIPT: CallLine[] = [
 const OPENING: Step[] = [
   { from: 'me', text: '어, 왜?' },
   { from: 'them', text: '뭐가 왜야' },
-  { from: 'them', text: '나 목말라. 물 좀 줘' },
   { from: 'them', text: '잘 살았냐?', longTyping: true },
   { from: 'me', text: '어. 뭐. 어쩐 일이야?' },
   { from: 'them', text: '그냥 뭐' },
@@ -63,6 +63,7 @@ const AFTER_CALL: Step[] = [
   { from: 'me', text: '나도 사람이야' },
   { from: 'them', text: '공부가 싫은 연시은이 뭘 하고 싶은지 궁금한데?' },
   { from: 'me', text: '드라이브' },
+  { from: 'them', text: 'ㅋㅋㅋㅋㅋㅋ' },
   { from: 'them', text: '너 진짜. 이번엔 특히나 더 또라이야', longTyping: true },
   { from: 'me', text: '너가 할 말은 아니지' },
   { from: 'me', text: '그래서 안 갈 거야?' },
@@ -71,8 +72,9 @@ const AFTER_CALL: Step[] = [
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export function useSuhoStory(active: boolean) {
+export function useSuhoStory(active: boolean, homeIdle: boolean) {
   const [stage, setStage] = useState<StoryStage>('waiting')
+  const [rewound, setRewound] = useState(false)
   const [extra, setExtra] = useState<Message[]>([])
   const [typing, setTyping] = useState(false)
   const [draft, setDraft] = useState('')
@@ -87,14 +89,18 @@ export function useSuhoStory(active: boolean) {
   }, [])
 
   useEffect(() => {
-    if (!active || stage !== 'waiting') return
-    const timer = setTimeout(() => {
-      setExtra([{ from: 'them', text: '시은아', date: STORY_DATE, time: '오후 2:20' }])
-      setStage('notified')
-      setBannerVisible(true)
-    }, ARRIVAL_DELAY)
+    const ready = rewound ? homeIdle : active
+    if (!ready || stage !== 'waiting') return
+    const timer = setTimeout(
+      () => {
+        setExtra([{ from: 'them', text: '시은아', date: STORY_DATE, time: '오후 2:20' }])
+        setStage('notified')
+        setBannerVisible(true)
+      },
+      rewound ? REWOUND_ARRIVAL_DELAY : ARRIVAL_DELAY,
+    )
     return () => clearTimeout(timer)
-  }, [active, stage])
+  }, [active, homeIdle, rewound, stage])
 
   useEffect(() => {
     if (!bannerVisible) return
@@ -167,8 +173,9 @@ export function useSuhoStory(active: boolean) {
     play(AFTER_CALL).then((ok) => ok && setStage('done'))
   }, [stage, play])
 
-  const reset = useCallback(() => {
+  const reset = useCallback((afterRewind = false) => {
     runRef.current++
+    setRewound(afterRewind)
     setStage('waiting')
     setExtra([])
     setTyping(false)
