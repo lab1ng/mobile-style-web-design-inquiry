@@ -92,7 +92,7 @@ export function PhoneOS() {
       case 'clock':
         return <ClockApp timeline={timeline} />
       case 'ebsi':
-        return <EbsiApp />
+        return <EbsiApp year={Number(timeline.id.slice(0, 4))} />
       case 'instagram':
         return <InstagramApp key={timeline.id} profile={timeline.instagram} />
       default:

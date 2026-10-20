@@ -30,7 +30,13 @@ const NAV = [
   { label: '나의학습방', icon: UserCircle2 },
 ]
 
-export function EbsiApp() {
+const EDITIONS = {
+  2022: { grade: '고1/고2', badge: '고1·2', banner: '6월 모의고사', circleTitle: '6월 모의고사', series: '2022' },
+  2024: { grade: '고3/N수', badge: '고3', banner: '수능 해설강의', circleTitle: '수능', series: '2024' },
+} as const
+
+export function EbsiApp({ year }: { year: number }) {
+  const edition = year === 2022 ? EDITIONS[2022] : EDITIONS[2024]
   return (
     <div className="flex h-full flex-col bg-white text-neutral-900" aria-label="EBSi 고교강의 홈">
       <header className="flex shrink-0 items-center border-b-2 border-neutral-300 px-3 pb-2" aria-hidden="true">
@@ -41,13 +47,12 @@ export function EbsiApp() {
           </span>
           <span className="rounded-full bg-[#7bc243] px-1.5 py-0.5 text-[9px] font-bold text-white">풀서비스</span>
         </div>
-        <span className="mr-2 text-sm text-[#e5484d]">수능 D-30</span>
         <MoreVertical className="size-5" />
       </header>
 
       <div className="flex shrink-0 border-b-2 border-neutral-300 text-[15px]" aria-hidden="true">
         <span className="flex w-[27%] items-center justify-center gap-1 bg-[#b3d4fc] py-2.5 font-bold text-[#1e4fa0]">
-          고3/N수 <ChevronDown className="size-4" />
+          {edition.grade} <ChevronDown className="size-4" />
         </span>
         <span className="flex-1 py-2.5 text-center">선생님</span>
         <span className="flex-1 py-2.5 text-center">모든강좌</span>
@@ -57,12 +62,12 @@ export function EbsiApp() {
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         <section className="relative h-36 overflow-hidden bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#60a5fa]">
           <div className="absolute top-8 left-6">
-            <p className="text-[26px] font-black text-[#7ff3ff] drop-shadow">10월 학력평가</p>
+            <p className="text-[26px] font-black text-[#7ff3ff] drop-shadow">{edition.banner}</p>
             <p className="text-xs text-white/90">수능 준비를 위한 가장 확실한</p>
           </div>
           <div className="absolute -top-1 -right-6 flex size-40 flex-col items-center justify-center rounded-full border-4 border-[#4ea4ff] bg-[#1a2556] text-center">
-            <span className="rounded-b-md bg-[#3b82f6] px-2 text-[11px] font-black text-[#bfe3ff]">고3</span>
-            <p className="mt-1 text-[15px] font-black text-white">10월 학력평가</p>
+            <span className="rounded-b-md bg-[#3b82f6] px-2 text-[11px] font-black text-[#bfe3ff]">{edition.badge}</span>
+            <p className="mt-1 text-[15px] font-black text-white">{edition.circleTitle}</p>
             <p className="text-xl font-black text-[#7fd0ff]">해설강의</p>
             <p className="mt-1 text-[11px] font-bold text-[#bfe3ff]">바로가기</p>
           </div>
@@ -127,7 +132,7 @@ export function EbsiApp() {
           <div className="mt-3 grid grid-cols-3 border border-neutral-200 text-center">
             {['수능특강', '수능완성', '인터넷 수능'].map((s, i) => (
               <div key={s} className={`py-4 ${i < 2 ? 'border-r border-neutral-200' : ''}`}>
-                <p className="text-lg font-black text-[#2d5fb4]">2025</p>
+                <p className="text-lg font-black text-[#2d5fb4]">{edition.series}</p>
                 <p className="text-xs text-neutral-600">{s}</p>
               </div>
             ))}

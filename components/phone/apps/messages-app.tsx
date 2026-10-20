@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronRight, MessageCircle } from 'lucide-react'
+import { ChevronRight, CircleAlert, MessageCircle, Play } from 'lucide-react'
 import { Fragment, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { Timeline } from '@/lib/timelines'
@@ -22,6 +22,35 @@ function listLabel(date: string, today: string) {
   const { y, m, d } = parts(date)
   if (date === today) return '오늘'
   return `${y}. ${m}. ${d}.`
+}
+
+const WAVE = [6, 10, 14, 9, 16, 12, 7, 13, 18, 11, 8, 15, 10, 6, 12, 9, 14, 7, 11, 5]
+
+function VoiceBubble({ duration, transcript, isMe }: { duration: string; transcript: string; isMe: boolean }) {
+  return (
+    <div
+      className={cn(
+        'flex max-w-[78%] flex-col gap-2 rounded-2xl px-3.5 py-2.5',
+        isMe ? 'rounded-br-md bg-sky-500' : 'rounded-bl-md bg-neutral-800',
+      )}
+    >
+      <div className="flex items-center gap-2.5">
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white/20">
+          <Play className="ml-0.5 size-3.5 fill-white text-white" aria-hidden="true" />
+        </span>
+        <span className="flex h-5 items-center gap-[3px]" aria-hidden="true">
+          {WAVE.map((h, i) => (
+            <span key={i} className="w-[2px] rounded-full bg-white/70" style={{ height: h }} />
+          ))}
+        </span>
+        <span className="text-[13px] tabular-nums text-white/80">
+          <span className="sr-only">음성 메시지 </span>
+          {duration}
+        </span>
+      </div>
+      <p className="border-t border-white/10 pt-2 text-[14px] leading-snug text-white/90 text-pretty">{transcript}</p>
+    </div>
+  )
 }
 
 export function MessagesApp({ timeline }: { timeline: Timeline }) {
@@ -46,15 +75,23 @@ export function MessagesApp({ timeline }: { timeline: Timeline }) {
                   </p>
                 )}
                 <div className={cn('flex flex-col gap-0.5', isMe ? 'items-end' : 'items-start')}>
-                  <p
-                    className={cn(
-                      'max-w-[78%] whitespace-pre-line rounded-2xl px-3.5 py-2 text-[15px] leading-snug text-pretty',
-                      isMe ? 'bg-sky-500 text-white' : 'bg-neutral-800 text-white',
-                      !nextSameSide && (isMe ? 'rounded-br-md' : 'rounded-bl-md'),
-                    )}
-                  >
-                    {m.text}
-                  </p>
+                  {m.voice ? (
+                    <VoiceBubble duration={m.voice} transcript={m.text} isMe={isMe} />
+                  ) : (
+                    <div className="flex max-w-[85%] items-center gap-1.5">
+                      <p
+                        className={cn(
+                          'whitespace-pre-line rounded-2xl px-3.5 py-2 text-[15px] leading-snug text-pretty',
+                          isMe ? 'bg-sky-500 text-white' : 'bg-neutral-800 text-white',
+                          !nextSameSide && (isMe ? 'rounded-br-md' : 'rounded-bl-md'),
+                        )}
+                      >
+                        {m.text}
+                      </p>
+                      {m.failed && <CircleAlert className="size-5 shrink-0 text-red-500" aria-label="전송 실패" />}
+                    </div>
+                  )}
+                  {m.failed && <span className="px-1 text-[11px] text-red-500">전송되지 않음</span>}
                   {m.time && <span className="px-1 text-[11px] text-neutral-500">{m.time}</span>}
                 </div>
               </Fragment>

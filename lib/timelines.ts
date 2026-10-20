@@ -1,4 +1,5 @@
-import { buildSchedule2024 } from './calendar-schedule'
+import { buildSchedule2022, buildSchedule2024 } from './calendar-schedule'
+import { MESSAGES_2022 } from './messages-2022'
 import { MESSAGES_2024 } from './messages-2024'
 
 export type Message = {
@@ -7,6 +8,10 @@ export type Message = {
   /** YYYY-MM-DD */
   date: string
   time?: string
+  /** 음성 메시지 길이 (예: 0:13). text는 음성 내용으로 표시 */
+  voice?: string
+  /** 전송 실패한 메시지 */
+  failed?: boolean
 }
 export type Conversation = {
   id: string
@@ -145,7 +150,7 @@ export const TIMELINES: Timeline[] = [
         title: '2024 마지막 순간, 함께 새해를 맞이해요',
         thumbnail: '/images/newyear-video.png',
         duration: 'LIVE',
-        nextTimelineId: '2022-05-23',
+        nextTimelineId: '2022-07-13',
       },
       news: [
         { id: 'n1', title: '보신각 타종 행사, 올해도 수만 명 운집 예상', source: '연합뉴스' },
@@ -167,24 +172,67 @@ export const TIMELINES: Timeline[] = [
     events: buildSchedule2024(),
   },
   {
-    id: '2022-05-23',
+    id: '2022-07-13',
     label: '2차',
     time: '14:20',
     wallpaper: '/images/wallpaper-2022.png',
-    messages: [],
+    messages: MESSAGES_2022,
     photos: [],
-    memos: [],
+    memos: [
+      {
+        id: 'm3',
+        title: '미역국 끓이는 법 찾아보기',
+        body: '파티룸 빌리기\n풍선\n파티용품',
+        updated: '2022.07.08',
+      },
+      { id: 'm2', title: '신선설농탕 이게 그렇게 맛있나', body: '', updated: '2022.06.17' },
+      { id: 'm1', title: '사과하기', body: '', updated: '2022.06.02' },
+    ],
     music: { createdAt: '', tracks: [] },
-    phone: { favorites: [], recents: [], speedDial: {} },
+    phone: {
+      favorites: [],
+      speedDial: {},
+      recents: [
+        { id: 'c1', name: '안수호', subtitle: '휴대전화', time: '오후 1:47', type: 'incoming', count: 5 },
+        { id: 'c2', name: '영이', subtitle: '휴대전화', time: '오전 11:02', type: 'incoming' },
+        { id: 'c3', name: '안수호', subtitle: '휴대전화', time: '월요일', type: 'missed' },
+        { id: 'c4', name: '오범석', subtitle: '휴대전화', time: '토요일', type: 'incoming' },
+        { id: 'c5', name: '영이', subtitle: '휴대전화', time: '토요일', type: 'incoming' },
+        { id: 'c6', name: '안수호', subtitle: '휴대전화', time: '22. 6. 26.', type: 'incoming' },
+        { id: 'c7', name: '112', subtitle: '대한민국', time: '22. 6. 17.', type: 'incoming' },
+        { id: 'c8', name: '안수호', subtitle: '휴대전화', time: '22. 6. 17.', type: 'missed' },
+        { id: 'c9', name: '오범석', subtitle: '휴대전화', time: '22. 6. 17.', type: 'incoming', count: 2 },
+        { id: 'c10', name: '안수호', subtitle: '휴대전화', time: '22. 6. 17.', type: 'incoming' },
+        { id: 'c11', name: '아버지', subtitle: '휴대전화', time: '22. 6. 16.', type: 'incoming' },
+        { id: 'c12', name: '영이', subtitle: '휴대전화', time: '22. 6. 16.', type: 'incoming' },
+        { id: 'c13', name: '영이', subtitle: '휴대전화', time: '22. 6. 15.', type: 'outgoing' },
+        { id: 'c14', name: '안수호', subtitle: '휴대전화', time: '22. 6. 15.', type: 'incoming' },
+        { id: 'c15', name: '오범석', subtitle: '휴대전화', time: '22. 6. 15.', type: 'incoming' },
+        { id: 'c16', name: '안수호', subtitle: '휴대전화', time: '22. 6. 6.', type: 'incoming' },
+      ],
+    },
     naver: {
       news: [
-        { id: 'n1', title: '전국 대체로 맑음, 낮 최고 28도 초여름 더위', source: '연합뉴스' },
-        { id: 'n2', title: '대학가 축제 시즌 돌아왔다', source: '중앙일보' },
+        { id: 'n1', title: '전국 폭염특보 확대… 낮 최고 35도 안팎 무더위', source: '연합뉴스' },
+        { id: 'n2', title: '열대야 사흘째, 밤에도 25도 이상… 온열질환 주의', source: 'YTN' },
+        { id: 'n3', title: '장마 소강 뒤 다시 비… 주말 중부지방 집중호우 예보', source: 'KBS' },
+        { id: 'n4', title: '자외선 지수 \'매우 높음\', 한낮 야외활동 자제해야', source: '한겨레' },
+        { id: 'n5', title: '올여름 평년보다 덥다… 기상청 \"8월까지 무더위 지속\"', source: '중앙일보' },
       ],
-      searches: [],
+      searches: [
+        { term: '미역국 끓이는 법', date: '07.08.' },
+        { term: '심장이 울렁거리고 뒷목이 간질거릴 때', date: '07.05.' },
+        { term: '오토바이 안전', date: '07.04.' },
+        { term: '친구 화해시키는 법', date: '06.29.' },
+        { term: '자니 노래', date: '06.27.' },
+        { term: '칼 베였을 때 치료', date: '06.07.' },
+        { term: '6월 전국연합학력평가 정답', date: '06.02.' },
+        { term: '고깃집 알바', date: '05.30.' },
+        { term: '돈오소', date: '05.24.' },
+      ],
     },
     instagram: INSTAGRAM_PROFILE,
-    events: [],
+    events: buildSchedule2022(),
   },
 ]
 

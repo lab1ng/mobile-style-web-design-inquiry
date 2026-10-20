@@ -46,12 +46,37 @@ export function buildSchedule2024(): CalendarEvent[] {
     const weekday = d.getDay()
     const month = d.getMonth() + 1
     const day = d.getDate()
-    if (month === 9 && day === 7) add(id, '수호 생일', 'birthday')
+    if (month === 7 && day === 9) add(id, '수호 생일', 'birthday')
     if (d.getFullYear() === 2024 && weekday === 0 && day >= 8 && day <= 14) {
       add(id, '바쿠, 고탁, 준태', 'friends')
     }
     if (weekday === 0 || weekday === 6) add(id, '수호 병원', 'hospital')
     if (weekday === 1 || weekday === 3 || weekday === 5) add(id, '학원', 'academy')
+  })
+
+  return events
+}
+
+/** 2022년 일정 (2차 2022.07.13 기준 캘린더) */
+export function buildSchedule2022(): CalendarEvent[] {
+  const events: CalendarEvent[] = []
+  const add = (date: string, title: string, category: CalendarCategory, canceled = false) =>
+    events.push({ date, title, category, ...(canceled && { canceled }) })
+
+  add('2022-06-02', '모의고사', 'exam')
+  add('2022-06-12', '수행평가 모임 안수호 오범석', 'school')
+  add('2022-06-17', '영이', 'friends')
+  add('2022-06-25', '엄마랑 점심', 'plan')
+  add('2022-06-26', '점심약속', 'plan')
+  add('2022-06-28', '한강', 'friends')
+  add('2022-07-01', '좋았던 날', 'plan')
+  add('2022-07-09', '안수호 생일(파티룸)', 'birthday')
+  add('2022-07-09', '양양', 'plan', true)
+  add('2022-07-14', '기말고사', 'exam')
+
+  eachDay('2022-01-01', '2022-12-31', (d, id) => {
+    const weekday = d.getDay()
+    if (weekday >= 1 && weekday <= 4) add(id, '학원', 'academy')
   })
 
   return events
