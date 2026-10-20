@@ -62,7 +62,7 @@ export type MessagesStory = {
   composable: boolean
   onOpen: () => void
   onChoose: (index: 0 | 1) => void
-  onCompose: () => void
+  onCompose: (text: string) => void
 }
 
 function TypingBubble() {
@@ -105,9 +105,10 @@ function Composer({ story }: { story: MessagesStory }) {
         className="flex items-center gap-2"
         onSubmit={(e) => {
           e.preventDefault()
-          if (!story.composable || !input.trim()) return
+          const text = input.trim()
+          if (!story.composable || !text) return
           setInput('')
-          story.onCompose()
+          story.onCompose(text)
         }}
       >
         <label htmlFor="story-composer" className="sr-only">
@@ -190,7 +191,7 @@ export function MessagesApp({ timeline, story, initialOpenId }: Props) {
                     <div className="flex max-w-[85%] items-center gap-1.5">
                       <p
                         className={cn(
-                          'whitespace-pre-line rounded-2xl px-3.5 py-2 text-[15px] leading-snug text-pretty',
+                          'whitespace-pre-line break-all rounded-2xl px-3.5 py-2 text-[15px] leading-snug',
                           isMe ? 'bg-sky-500 text-white' : 'bg-neutral-800 text-white',
                           !nextSameSide && (isMe ? 'rounded-br-md' : 'rounded-bl-md'),
                         )}

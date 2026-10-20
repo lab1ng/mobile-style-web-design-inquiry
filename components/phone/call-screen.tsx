@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useEffectEvent, useState, type ReactNode } from 'react'
 import { Ellipsis, Grip, MicOff, Phone, PhoneOff, Video, Volume2 } from 'lucide-react'
 import type { Contact } from '@/lib/timelines'
+import type { CallLine } from './use-suho-story'
 
 function CallControl({ icon, label }: { icon: ReactNode; label: string }) {
   return (
@@ -22,23 +23,64 @@ function formatElapsed(seconds: number) {
 type StoryCallProps = {
   contact: Contact
   connected: boolean
-  line: string
+  script: CallLine[]
   onAnswer: () => void
   onEnd: () => void
 }
 
-export function StoryCallScreen({ contact, connected, line, onAnswer, onEnd }: StoryCallProps) {
+const TYPE_MS = 140
+const LINE_HOLD_MS = 1600
+const FIRST_LINE_DELAY = 1500
+const END_DELAY = 1800
+
+function useTypedScript(script: CallLine[], running: boolean, onFinish: () => void) {
+  const [index, setIndex] = useState(-1)
+  const [chars, setChars] = useState(0)
+  const finish = useEffectEvent(onFinish)
+
+  useEffect(() => {
+    if (!running) return
+    let cancelled = false
+    const timers: number[] = []
+    const wait = (ms: number) => new Promise<void>((r) => timers.push(window.setTimeout(r, ms)))
+
+    ;(async () => {
+      await wait(FIRST_LINE_DELAY)
+      for (let i = 0; i < script.length; i++) {
+        if (cancelled) return
+        const line = script[i]
+        setIndex(i)
+        setChars(0)
+        if (line.note) await wait(line.text ? 1400 : 0)
+        const text = line.text ?? ''
+        for (let c = 1; c <= text.length; c++) {
+          if (cancelled) return
+          setChars(c)
+          await wait(TYPE_MS)
+        }
+        await wait(line.hold ?? LINE_HOLD_MS)
+      }
+      await wait(END_DELAY)
+      if (!cancelled) finish()
+    })()
+
+    return () => {
+      cancelled = true
+      timers.forEach(window.clearTimeout)
+    }
+  }, [running, script])
+
+  return { line: index >= 0 ? script[index] : null, typed: index >= 0 ? (script[index].text ?? '').slice(0, chars) : '' }
+}
+
+export function StoryCallScreen({ contact, connected, script, onAnswer, onEnd }: StoryCallProps) {
   const [elapsed, setElapsed] = useState(0)
-  const [showLine, setShowLine] = useState(false)
+  const { line, typed } = useTypedScript(script, connected, onEnd)
 
   useEffect(() => {
     if (!connected) return
     const tick = window.setInterval(() => setElapsed((s) => s + 1), 1000)
-    const reveal = window.setTimeout(() => setShowLine(true), 2000)
-    return () => {
-      window.clearInterval(tick)
-      window.clearTimeout(reveal)
-    }
+    return () => window.clearInterval(tick)
   }, [connected])
 
   return (
@@ -55,13 +97,17 @@ export function StoryCallScreen({ contact, connected, line, onAnswer, onEnd }: S
       </div>
 
       <div className="flex flex-1 items-center justify-center px-8">
-        {connected && showLine && (
-          <p
-            aria-live="polite"
-            className="text-center text-2xl font-medium leading-relaxed text-white text-balance animate-in fade-in slide-in-from-bottom-2 duration-1000 [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]"
-          >
-            {`'${line}'`}
-          </p>
+        {connected && line && (
+          <div aria-live="polite" className="flex min-h-28 flex-col items-center gap-2 text-center">
+            <span className="text-[13px] font-medium text-white/50">{line.from === 'me' ? '나' : contact.name}</span>
+            {line.note && <span className="text-[15px] text-white/60">{`(${line.note})`}</span>}
+            {line.text !== undefined && (
+              <p className="text-2xl font-medium leading-relaxed text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]">
+                {typed}
+                <span className="ml-0.5 inline-block h-6 w-[2px] translate-y-1 animate-pulse bg-white/80" aria-hidden="true" />
+              </p>
+            )}
+          </div>
         )}
       </div>
 

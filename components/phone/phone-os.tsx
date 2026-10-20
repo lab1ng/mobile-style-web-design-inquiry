@@ -6,7 +6,7 @@ import { SwipeBack } from './swipe-back'
 import { CallScreen, StoryCallScreen } from './call-screen'
 import { ConfirmDialog } from './confirm-dialog'
 import { NotificationBanner } from './notification-banner'
-import { STORY_CHOICES, STORY_CONVO_ID, STORY_DATE, useSuhoStory } from './use-suho-story'
+import { CALL_SCRIPT, STORY_CHOICES, STORY_CONVO_ID, STORY_DATE, useSuhoStory } from './use-suho-story'
 import type { PlacedCall } from './apps/phone-app'
 import { StatusBar } from './status-bar'
 import { HomeScreen } from './home-screen'
@@ -66,6 +66,13 @@ export function PhoneOS() {
     setOpenApp('messages')
   }
 
+  const endStoryCall = () => {
+    story.hangUp()
+    setMessagesFocus(STORY_CONVO_ID)
+    setMessagesKey((k) => k + 1)
+    setOpenApp('messages')
+  }
+
   const rewind = () => {
     setLastChance(false)
     travel(STORY_DATE, false)
@@ -109,7 +116,9 @@ export function PhoneOS() {
                     composable: story.stage === 'stayed',
                     onOpen: story.open,
                     onChoose: story.choose,
-                    onCompose: () => setLastChance(true),
+                    onCompose: (text) => {
+                      if (story.sendFailed(text)) setLastChance(true)
+                    },
                   }
                 : undefined
             }
@@ -193,9 +202,9 @@ export function PhoneOS() {
         <StoryCallScreen
           contact={suho}
           connected={story.stage === 'call'}
-          line="시은아 그럴리가"
+          script={CALL_SCRIPT}
           onAnswer={story.answer}
-          onEnd={story.hangUp}
+          onEnd={endStoryCall}
         />
       )}
 

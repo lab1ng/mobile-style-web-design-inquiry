@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { useEffect, useEffectEvent, useState } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -74,21 +73,8 @@ const TICKER =
 
 function LiveNews({ count, thumbnail }: { count: number; thumbnail?: string }) {
   return (
-    <div className="absolute inset-0 flex flex-col bg-neutral-950 text-white">
+    <div className="absolute inset-0 flex flex-col bg-black text-white">
       <div className="relative flex-1 overflow-hidden">
-        {thumbnail ? (
-          <Image
-            src={thumbnail}
-            alt=""
-            fill
-            sizes="(min-width: 640px) 390px, 100vw"
-            className="animate-slow-zoom object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-b from-indigo-950 to-black" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/80" />
-
         <div className="relative flex items-center justify-between px-4 pt-14">
           <div className="flex items-center gap-2">
             <span className="flex items-center gap-1.5 rounded-sm bg-red-600 px-2 py-0.5 text-xs font-bold tracking-wider">
@@ -188,10 +174,7 @@ function BlueScreen({ targetId }: { targetId: string }) {
 
 function BootScreen() {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-10 bg-black animate-in fade-in duration-700">
-      <div className="flex size-20 items-center justify-center rounded-full border-2 border-white/90">
-        <div className="size-10 rounded-full bg-white/90" />
-      </div>
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-black animate-in fade-in duration-700">
       <div className="h-1 w-32 overflow-hidden rounded-full bg-white/20">
         <div className="animate-boot-progress h-full w-full rounded-full bg-white" />
       </div>
