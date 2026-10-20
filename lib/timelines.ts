@@ -1,3 +1,5 @@
+import { buildSchedule2024 } from './calendar-schedule'
+
 export type Message = { from: 'me' | 'them'; text: string; time: string }
 export type Conversation = {
   id: string
@@ -25,7 +27,14 @@ export type PhoneData = {
 }
 export type NewsItem = { id: string; title: string; source: string }
 export type NaverVideo = { title: string; thumbnail: string; duration: string }
-export type CalendarEvent = { date: string; title: string }
+export type CalendarCategory = 'hospital' | 'academy' | 'birthday' | 'exam' | 'friends' | 'school' | 'plan'
+export type CalendarEvent = {
+  date: string
+  title: string
+  category: CalendarCategory
+  /** 취소된 일정은 취소선으로 표시 */
+  canceled?: boolean
+}
 
 export type Timeline = {
   /** YYYY-MM-DD */
@@ -121,11 +130,7 @@ export const TIMELINES: Timeline[] = [
         { id: 'n3', title: '새해 첫 일출 명소, 내일 날씨는 맑음', source: 'YTN' },
       ],
     },
-    events: [
-      { date: '2024-12-24', title: '크리스마스 이브 약속' },
-      { date: '2024-12-31', title: '카운트다운 보기' },
-      { date: '2022-05-23', title: '그날' },
-    ],
+    events: buildSchedule2024(),
   },
   {
     id: '2022-05-23',
@@ -142,7 +147,7 @@ export const TIMELINES: Timeline[] = [
         { id: 'n2', title: '대학가 축제 시즌 돌아왔다', source: '중앙일보' },
       ],
     },
-    events: [{ date: '2022-05-23', title: '오늘' }],
+    events: [],
   },
 ]
 

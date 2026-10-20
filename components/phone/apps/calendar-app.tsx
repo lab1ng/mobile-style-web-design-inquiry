@@ -1,13 +1,30 @@
 'use client'
 
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
-import { formatKoreanDate, parseDate, TIMELINES, type Timeline } from '@/lib/timelines'
+import {
+  formatKoreanDate,
+  parseDate,
+  TIMELINES,
+  type CalendarCategory,
+  type CalendarEvent,
+  type Timeline,
+} from '@/lib/timelines'
 import { AppBody } from '../app-shell'
 import { ConfirmDialog } from '../confirm-dialog'
 
 const WEEK_HEADER = ['일', '월', '화', '수', '목', '금', '토']
+
+const CATEGORY_COLOR: Record<CalendarCategory, string> = {
+  hospital: 'bg-red-400',
+  academy: 'bg-sky-400',
+  birthday: 'bg-pink-400',
+  exam: 'bg-violet-400',
+  friends: 'bg-emerald-400',
+  school: 'bg-orange-400',
+  plan: 'bg-yellow-300',
+}
 const TRAVELABLE = new Set(TIMELINES.map((t) => t.id))
 
 const toId = (y: number, m: number, d: number) =>
@@ -38,8 +55,16 @@ export function CalendarApp({ timeline, onTravel }: Props) {
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ]
 
-  const eventDates = new Set(timeline.events.map((e) => e.date))
-  const selectedEvents = timeline.events.filter((e) => e.date === selected)
+  const eventsByDate = useMemo(() => {
+    const map = new Map<string, CalendarEvent[]>()
+    for (const e of timeline.events) {
+      const list = map.get(e.date)
+      if (list) list.push(e)
+      else map.set(e.date, [e])
+    }
+    return map
+  }, [timeline.events])
+  const selectedEvents = eventsByDate.get(selected) ?? []
 
   const handleSelect = (id: string) => {
     setSelected(id)
@@ -94,6 +119,7 @@ export function CalendarApp({ timeline, onTravel }: Props) {
             const isToday = id === timeline.id
             const isSelected = id === selected
             const isTravelable = TRAVELABLE.has(id) && !isToday
+            const dayCategories = [...new Set((eventsByDate.get(id) ?? []).map((e) => e.category))].slice(0, 3)
             return (
               <button
                 key={id}
@@ -109,16 +135,16 @@ export function CalendarApp({ timeline, onTravel }: Props) {
                     isToday && 'bg-red-500 font-semibold text-white',
                     !isToday && isSelected && 'bg-white font-semibold text-black',
                     !isToday && !isSelected && i % 7 === 0 && 'text-red-400/80',
+                    isTravelable && !isSelected && 'ring-2 ring-amber-400',
                   )}
                 >
                   {day}
                 </span>
-                <span
-                  className={cn(
-                    'size-1.5 rounded-full',
-                    isTravelable ? 'bg-amber-400' : eventDates.has(id) ? 'bg-neutral-500' : 'bg-transparent',
-                  )}
-                />
+                <span className="flex h-1.5 gap-0.5" aria-hidden="true">
+                  {dayCategories.map((c) => (
+                    <span key={c} className={cn('size-1.5 rounded-full', CATEGORY_COLOR[c])} />
+                  ))}
+                </span>
               </button>
             )
           })}
@@ -132,8 +158,15 @@ export function CalendarApp({ timeline, onTravel }: Props) {
             <ul className="mt-2 flex flex-col gap-2">
               {selectedEvents.map((e) => (
                 <li key={e.title} className="flex items-center gap-3 rounded-xl bg-neutral-900 px-4 py-3">
-                  <span className="h-6 w-1 rounded-full bg-red-500" />
-                  {e.title}
+                  <span className={cn('h-6 w-1 shrink-0 rounded-full', CATEGORY_COLOR[e.category], e.canceled && 'opacity-40')} />
+                  {e.canceled ? (
+                    <del className="text-neutral-500 decoration-neutral-400">
+                      <span className="sr-only">취소됨: </span>
+                      {e.title}
+                    </del>
+                  ) : (
+                    e.title
+                  )}
                 </li>
               ))}
             </ul>
