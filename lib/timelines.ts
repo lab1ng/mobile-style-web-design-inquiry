@@ -99,7 +99,7 @@ export const TIMELINES: Timeline[] = [
     id: '2024-12-31',
     label: '1차',
     time: '23:59',
-    wallpaper: '/images/wallpaper-2024.png',
+    wallpaper: '/images/wallpaper-2024.jpg',
     messages: MESSAGES_2024,
     photos: [
       { id: 'p1', src: '/images/photo-winter.png', alt: '전구로 장식된 눈 내린 골목', date: '2024.12.24' },
@@ -175,7 +175,7 @@ export const TIMELINES: Timeline[] = [
     id: '2022-07-13',
     label: '2차',
     time: '14:20',
-    wallpaper: '/images/wallpaper-2022.png',
+    wallpaper: '/images/wallpaper-2022.jpg',
     messages: MESSAGES_2022,
     photos: [],
     memos: [
