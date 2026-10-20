@@ -102,9 +102,10 @@ export const TIMELINES: Timeline[] = [
     wallpaper: '/images/wallpaper-2024.jpg',
     messages: MESSAGES_2024,
     photos: [
-      { id: 'p1', src: '/images/photo-winter.png', alt: '전구로 장식된 눈 내린 골목', date: '2024.12.24' },
-      { id: 'p2', src: '/images/photo-cafe.png', alt: '카페 테이블 위 라떼와 케이크', date: '2024.12.28' },
-      { id: 'p3', src: '/images/photo-spring.png', alt: '초록 나무가 늘어선 캠퍼스 길', date: '2022.05.23' },
+      { id: 'p2024-01', src: '/images/photos/2024-01.jpg', alt: '밤에 야외 테라스에서 친구 넷이 찍은 셀카', date: '2024.12.28' },
+      { id: 'p2024-02', src: '/images/photos/2024-02.jpg', alt: '한복 의상을 입고 궁궐 배경 앞에서 찍은 단체 셀카', date: '2024.12.21' },
+      { id: 'p2024-03', src: '/images/photos/2024-03.jpg', alt: '교복 입은 친구들과 방 안에서 찍은 셀카', date: '2024.12.14' },
+      { id: 'p2024-04', src: '/images/photos/2024-04.jpg', alt: '농구장 앞에서 응원 피켓을 든 친구 넷', date: '2024.12.07' },
     ],
     memos: [
       {
