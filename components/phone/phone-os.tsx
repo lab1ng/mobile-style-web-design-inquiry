@@ -8,8 +8,8 @@ import type { PlacedCall } from './apps/phone-app'
 import { StatusBar } from './status-bar'
 import { HomeScreen } from './home-screen'
 import { SequenceOverlay, type Sequence } from './sequence-overlay'
-import { APPS, type AppId } from './apps-registry'
-import { PlaceholderApp } from './apps/placeholder-app'
+import type { AppId } from './apps-registry'
+import { InstagramApp } from './apps/instagram-app'
 import { MessagesApp } from './apps/messages-app'
 import { PhotosApp } from './apps/photos-app'
 import { MemoApp } from './apps/memo-app'
@@ -22,6 +22,7 @@ import { EbsiApp } from './apps/ebsi-app'
 
 const APP_BACKGROUNDS: Partial<Record<AppId, string>> = {
   phone: 'bg-black',
+  instagram: 'bg-[#0c1014]',
   clock: 'bg-black',
   ebsi: 'bg-white',
   music: 'bg-gradient-to-b from-[#5b5b5f] via-[#2f2f31] to-[#141414]',
@@ -93,7 +94,7 @@ export function PhoneOS() {
       case 'ebsi':
         return <EbsiApp />
       case 'instagram':
-        return <PlaceholderApp app={APPS[openApp]} />
+        return <InstagramApp key={timeline.id} profile={timeline.instagram} />
       default:
         return null
     }

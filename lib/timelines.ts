@@ -59,8 +59,34 @@ export type Timeline = {
     news: NewsItem[]
     /** 영상이 있으면 누를 때 새해 카운트다운 → 오류 → 재부팅이 시작됩니다 */
     video?: NaverVideo & { nextTimelineId: string }
+    /** 검색창을 누르면 보이는 최근 검색어 (맨 위부터) */
+    searches: { term: string; date: string }[]
   }
+  instagram: InstagramProfile
   events: CalendarEvent[]
+}
+
+export type InstagramAccount = {
+  username: string
+  name: string
+  /** 누르면 열리는 실제 인스타그램 주소 */
+  url: string
+}
+
+export type InstagramProfile = {
+  username: string
+  name: string
+  posts: number
+  followers: number
+  following: InstagramAccount[]
+}
+
+const INSTAGRAM_PROFILE: InstagramProfile = {
+  username: 'sieun_o006',
+  name: '연시은',
+  posts: 0,
+  followers: 1,
+  following: [{ username: 'suh_o006', name: '안수호', url: 'https://www.instagram.com/suh_o006/' }],
 }
 
 export const TIMELINES: Timeline[] = [
@@ -126,7 +152,18 @@ export const TIMELINES: Timeline[] = [
         { id: 'n2', title: '2024년을 돌아보는 10대 뉴스', source: '한겨레' },
         { id: 'n3', title: '새해 첫 일출 명소, 내일 날씨는 맑음', source: 'YTN' },
       ],
+      searches: [
+        { term: '연말 케이크 예약', date: '12.30.' },
+        { term: '정시 원서 접수', date: '12.27.' },
+        { term: '갑자기 우울해질 수 있나요', date: '12.19.' },
+        { term: '수능 끝나고 뭐 하면', date: '11.15.' },
+        { term: '00대학교', date: '10.02.' },
+        { term: '잠이 잘 안올 때', date: '06.11.' },
+        { term: '병원에 두면 좋은 식물', date: '12.03.' },
+        { term: '환자 베개 추천', date: '11.26.' },
+      ],
     },
+    instagram: INSTAGRAM_PROFILE,
     events: buildSchedule2024(),
   },
   {
@@ -144,7 +181,9 @@ export const TIMELINES: Timeline[] = [
         { id: 'n1', title: '전국 대체로 맑음, 낮 최고 28도 초여름 더위', source: '연합뉴스' },
         { id: 'n2', title: '대학가 축제 시즌 돌아왔다', source: '중앙일보' },
       ],
+      searches: [],
     },
+    instagram: INSTAGRAM_PROFILE,
     events: [],
   },
 ]

@@ -1,4 +1,4 @@
-import { Camera, Clock, Images, MessageSquare, Music, NotebookPen, Phone } from 'lucide-react'
+import { Camera, Clock, Compass, Images, MessageSquare, Music, NotebookPen, Phone } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 export type AppId =
@@ -65,9 +65,9 @@ export const APPS: Record<Exclude<AppId, 'calendar'>, AppDef> = {
   },
   naver: {
     id: 'naver',
-    name: 'NAVER',
-    className: 'bg-naver',
-    icon: <span className="text-3xl font-black leading-none text-white">N</span>,
+    name: 'Safari',
+    className: 'bg-white',
+    icon: <Compass className="size-10 text-[#1a8cff]" strokeWidth={1.6} />,
   },
   music: {
     id: 'music',
