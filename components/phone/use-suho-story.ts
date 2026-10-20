@@ -167,6 +167,25 @@ export function useSuhoStory(active: boolean, homeIdle: boolean) {
     return next >= FAILED_SENDS_BEFORE_PROMPT
   }, [failedSends])
 
+  const sendAfterEnding = useCallback(
+    (text: string): 'blocked' | 'sent' => {
+      const compact = text.replace(/\s+/g, '')
+      if (/사랑해|좋아해|미래/.test(compact)) {
+        setExtra((prev) => [...prev, { from: 'me', text, date: STORY_DATE, failed: true }])
+        return 'blocked'
+      }
+      setExtra((prev) => [...prev, { from: 'me', text, date: STORY_DATE }])
+      const reply = compact.includes('보고싶어')
+        ? '나도'
+        : compact.includes('수호야') || compact.includes('안수호')
+          ? '나 운전 중. 쫌만 기다려'
+          : null
+      if (reply) play([{ from: 'them', text: reply }])
+      return 'sent'
+    },
+    [play],
+  )
+
   const hangUp = useCallback(() => {
     if (stage !== 'call' && stage !== 'ringing') return
     setStage('script')
@@ -193,6 +212,7 @@ export function useSuhoStory(active: boolean, homeIdle: boolean) {
     open,
     choose,
     sendFailed,
+    sendAfterEnding,
     reset,
     answer: () => setStage('call'),
     hangUp,

@@ -39,6 +39,7 @@ export function PhoneOS() {
   const [placedCalls, setPlacedCalls] = useState<Record<string, PlacedCall[]>>({})
 
   const [lastChance, setLastChance] = useState(false)
+  const [timelineWarning, setTimelineWarning] = useState(false)
   const [messagesKey, setMessagesKey] = useState(0)
   const [messagesFocus, setMessagesFocus] = useState<string | undefined>()
 
@@ -119,11 +120,15 @@ export function PhoneOS() {
                     typing: story.typing,
                     draft: story.draft,
                     choices: story.stage === 'choice' ? STORY_CHOICES : null,
-                    composable: story.stage === 'stayed',
+                    composable: story.stage === 'stayed' || story.stage === 'done',
                     onOpen: story.open,
                     onViewChange: setViewingStoryChat,
                     onChoose: story.choose,
                     onCompose: (text) => {
+                      if (story.stage === 'done') {
+                        if (story.sendAfterEnding(text) === 'blocked') setTimelineWarning(true)
+                        return
+                      }
                       if (story.sendFailed(text)) setLastChance(true)
                     },
                   }
@@ -222,6 +227,17 @@ export function PhoneOS() {
           confirmLabel="되돌리기"
           onConfirm={rewind}
           onCancel={() => setLastChance(false)}
+        />
+      )}
+
+      {timelineWarning && (
+        <ConfirmDialog
+          title="전송 불가"
+          message="시간선의 오류가 발생할 수 있습니다. 2025년의 대상자에게 직접 전하세요"
+          confirmLabel="확인"
+          hideCancel
+          onConfirm={() => setTimelineWarning(false)}
+          onCancel={() => setTimelineWarning(false)}
         />
       )}
 
