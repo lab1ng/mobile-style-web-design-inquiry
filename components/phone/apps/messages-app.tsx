@@ -1,9 +1,9 @@
 'use client'
 
-import { ChevronRight, CircleAlert, MessageCircle, Play } from 'lucide-react'
-import { Fragment, useState } from 'react'
+import { ArrowUp, ChevronRight, CircleAlert, MessageCircle, Play } from 'lucide-react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
-import type { Timeline } from '@/lib/timelines'
+import type { Conversation, Message, Timeline } from '@/lib/timelines'
 import { AppBody, AppHeader, EmptyState } from '../app-shell'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
@@ -53,9 +53,118 @@ function VoiceBubble({ duration, transcript, isMe }: { duration: string; transcr
   )
 }
 
-export function MessagesApp({ timeline }: { timeline: Timeline }) {
-  const [openId, setOpenId] = useState<string | null>(null)
-  const convo = timeline.messages.find((c) => c.id === openId)
+export type MessagesStory = {
+  convoId: string
+  extra: Message[]
+  typing: boolean
+  draft: string
+  choices: readonly string[] | null
+  composable: boolean
+  onOpen: () => void
+  onChoose: (index: 0 | 1) => void
+  onCompose: () => void
+}
+
+function TypingBubble() {
+  return (
+    <div className="flex items-start" role="status" aria-label="입력 중">
+      <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-neutral-800 px-4 py-3">
+        {[0, 150, 300].map((delay) => (
+          <span
+            key={delay}
+            className="size-2 animate-bounce rounded-full bg-neutral-400"
+            style={{ animationDelay: `${delay}ms` }}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function Composer({ story }: { story: MessagesStory }) {
+  const [input, setInput] = useState('')
+  const value = story.composable ? input : story.draft
+
+  return (
+    <div className="shrink-0 border-t border-white/10 bg-neutral-950 px-3 pt-2 pb-1">
+      {story.choices && (
+        <div className="mb-2 flex flex-col items-end gap-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          {story.choices.map((choice, i) => (
+            <button
+              key={choice}
+              type="button"
+              onClick={() => story.onChoose(i as 0 | 1)}
+              className="rounded-full bg-sky-500/15 px-4 py-2 text-[15px] text-sky-300 ring-1 ring-sky-500/50 active:bg-sky-500/30"
+            >
+              {choice}
+            </button>
+          ))}
+        </div>
+      )}
+      <form
+        className="flex items-center gap-2"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (!story.composable || !input.trim()) return
+          setInput('')
+          story.onCompose()
+        }}
+      >
+        <label htmlFor="story-composer" className="sr-only">
+          메시지 입력
+        </label>
+        <input
+          id="story-composer"
+          value={value}
+          readOnly={!story.composable}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && (e.nativeEvent.isComposing || e.keyCode === 229)) e.preventDefault()
+          }}
+          placeholder="iMessage"
+          autoComplete="off"
+          className="h-9 min-w-0 flex-1 rounded-full border border-white/15 bg-transparent px-4 text-[15px] text-white placeholder:text-neutral-500 focus:outline-none"
+        />
+        <button
+          type="submit"
+          aria-label="보내기"
+          disabled={!value.trim()}
+          className="flex size-8 shrink-0 items-center justify-center rounded-full bg-sky-500 disabled:opacity-30"
+        >
+          <ArrowUp className="size-5" />
+        </button>
+      </form>
+    </div>
+  )
+}
+
+type Props = { timeline: Timeline; story?: MessagesStory; initialOpenId?: string }
+
+export function MessagesApp({ timeline, story, initialOpenId }: Props) {
+  const [openId, setOpenId] = useState<string | null>(initialOpenId ?? null)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  const conversations: Conversation[] = (() => {
+    if (!story || story.extra.length === 0) return timeline.messages
+    const merged = timeline.messages.map((c) =>
+      c.id === story.convoId ? { ...c, messages: [...c.messages, ...story.extra] } : c,
+    )
+    const lastDate = (c: Conversation) => c.messages[c.messages.length - 1]?.date ?? ''
+    return [...merged].sort((a, b) => lastDate(b).localeCompare(lastDate(a)))
+  })()
+
+  const convo = conversations.find((c) => c.id === openId)
+  const isStoryConvo = Boolean(story && convo?.id === story.convoId)
+  const unreadId = story?.extra.length === 1 ? story.convoId : null
+
+  const openConvo = (id: string) => {
+    setOpenId(id)
+    if (id === story?.convoId) story.onOpen()
+  }
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' })
+  }, [convo?.messages.length, story?.typing, story?.choices])
 
   if (convo) {
     return (
@@ -97,7 +206,10 @@ export function MessagesApp({ timeline }: { timeline: Timeline }) {
               </Fragment>
             )
           })}
+          {isStoryConvo && story?.typing && <TypingBubble />}
+          <div ref={bottomRef} />
         </AppBody>
+        {isStoryConvo && story && <Composer story={story} />}
       </div>
     )
   }
@@ -110,15 +222,20 @@ export function MessagesApp({ timeline }: { timeline: Timeline }) {
           <EmptyState icon={<MessageCircle className="size-12" />} title="메시지 없음" />
         ) : (
           <ul className="flex flex-col">
-            {timeline.messages.map((c) => {
+            {conversations.map((c) => {
               const last = c.messages[c.messages.length - 1]
               return (
                 <li key={c.id}>
                   <button
                     type="button"
-                    onClick={() => setOpenId(c.id)}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left active:bg-white/5"
+                    onClick={() => openConvo(c.id)}
+                    className="relative flex w-full items-center gap-3 px-4 py-3 text-left active:bg-white/5"
                   >
+                    {unreadId === c.id && (
+                      <span className="absolute top-1/2 left-1 size-2.5 -translate-y-1/2 rounded-full bg-sky-500">
+                        <span className="sr-only">읽지 않음</span>
+                      </span>
+                    )}
                     <span
                       className="flex size-12 shrink-0 items-center justify-center rounded-full text-lg font-bold text-white"
                       style={{ backgroundColor: c.color }}

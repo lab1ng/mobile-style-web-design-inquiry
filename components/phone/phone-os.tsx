@@ -3,7 +3,10 @@
 import { useState } from 'react'
 import { getTimeline, TIMELINES, type Contact } from '@/lib/timelines'
 import { SwipeBack } from './swipe-back'
-import { CallScreen } from './call-screen'
+import { CallScreen, StoryCallScreen } from './call-screen'
+import { ConfirmDialog } from './confirm-dialog'
+import { NotificationBanner } from './notification-banner'
+import { STORY_CHOICES, STORY_CONVO_ID, STORY_DATE, useSuhoStory } from './use-suho-story'
 import type { PlacedCall } from './apps/phone-app'
 import { StatusBar } from './status-bar'
 import { HomeScreen } from './home-screen'
@@ -35,7 +38,38 @@ export function PhoneOS() {
   const [activeCall, setActiveCall] = useState<Contact | null>(null)
   const [placedCalls, setPlacedCalls] = useState<Record<string, PlacedCall[]>>({})
 
+  const [lastChance, setLastChance] = useState(false)
+  const [messagesKey, setMessagesKey] = useState(0)
+  const [messagesFocus, setMessagesFocus] = useState<string | undefined>()
+
   const timeline = getTimeline(timelineId)
+  const storyEnabled = timelineId === STORY_DATE
+  const story = useSuhoStory(storyEnabled && sequence === null)
+  const suho = timeline.phone.favorites.find((c) => c.id === STORY_CONVO_ID) ?? {
+    id: STORY_CONVO_ID,
+    name: '안수호',
+    label: '휴대전화',
+  }
+
+  const startCall = (contact: Contact) => {
+    if (storyEnabled && contact.id === STORY_CONVO_ID && story.stage === 'stayed') {
+      setLastChance(true)
+      return
+    }
+    setActiveCall(contact)
+  }
+
+  const openStoryChat = () => {
+    story.open()
+    setMessagesFocus(STORY_CONVO_ID)
+    setMessagesKey((k) => k + 1)
+    setOpenApp('messages')
+  }
+
+  const rewind = () => {
+    setLastChance(false)
+    travel(STORY_DATE, false)
+  }
 
   const endCall = () => {
     if (!activeCall) return
@@ -59,7 +93,28 @@ export function PhoneOS() {
   const renderApp = () => {
     switch (openApp) {
       case 'messages':
-        return <MessagesApp timeline={timeline} />
+        return (
+          <MessagesApp
+            key={messagesKey}
+            timeline={timeline}
+            initialOpenId={messagesFocus}
+            story={
+              storyEnabled
+                ? {
+                    convoId: STORY_CONVO_ID,
+                    extra: story.extra,
+                    typing: story.typing,
+                    draft: story.draft,
+                    choices: story.stage === 'choice' ? STORY_CHOICES : null,
+                    composable: story.stage === 'stayed',
+                    onOpen: story.open,
+                    onChoose: story.choose,
+                    onCompose: () => setLastChance(true),
+                  }
+                : undefined
+            }
+          />
+        )
       case 'photos':
         return <PhotosApp timeline={timeline} />
       case 'memo':
@@ -69,7 +124,7 @@ export function PhoneOS() {
           <PhoneApp
             timeline={timeline}
             placedCalls={placedCalls[timelineId] ?? []}
-            onCall={setActiveCall}
+            onCall={startCall}
           />
         )
       case 'naver':
@@ -130,6 +185,30 @@ export function PhoneOS() {
 
       {activeCall && <CallScreen contact={activeCall} onEnd={endCall} />}
 
+      {storyEnabled && story.bannerVisible && (
+        <NotificationBanner title="안수호" body="시은아" onOpen={openStoryChat} />
+      )}
+
+      {storyEnabled && (story.stage === 'ringing' || story.stage === 'call') && (
+        <StoryCallScreen
+          contact={suho}
+          connected={story.stage === 'call'}
+          line="시은아 그럴리가"
+          onAnswer={story.answer}
+          onEnd={story.hangUp}
+        />
+      )}
+
+      {lastChance && (
+        <ConfirmDialog
+          title="마지막 기회입니다."
+          message="시간을 되돌리시겠습니까?"
+          confirmLabel="되돌리기"
+          onConfirm={rewind}
+          onCancel={() => setLastChance(false)}
+        />
+      )}
+
       <StatusBar time={timeline.time} dark={openApp === 'ebsi' && !activeCall} />
 
       <button
@@ -150,6 +229,9 @@ export function PhoneOS() {
           onSwitch={() => {
             setTimelineId(sequence.targetId)
             setOpenApp(null)
+            setActiveCall(null)
+            setMessagesFocus(undefined)
+            story.reset()
           }}
           onDone={() => setSequence(null)}
         />

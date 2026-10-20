@@ -190,8 +190,8 @@ export const TIMELINES: Timeline[] = [
     ],
     music: { createdAt: '', tracks: [] },
     phone: {
-      favorites: [],
-      speedDial: {},
+    favorites: [{ id: 'suho', name: '안수호', label: '휴대전화' }],
+    speedDial: { '1': 'suho' },
       recents: [
         { id: 'c1', name: '안수호', subtitle: '휴대전화', time: '오후 1:47', type: 'incoming', count: 5 },
         { id: 'c2', name: '영이', subtitle: '휴대전화', time: '오전 11:02', type: 'incoming' },
