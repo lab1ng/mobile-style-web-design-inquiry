@@ -52,7 +52,7 @@ export function PhoneOS() {
   const [rewinding, setRewinding] = useState(false)
   const story = useSuhoStory(
     storyEnabled && sequence === null && openApp === 'messages' && viewingStoryChat,
-    storyEnabled && sequence === null && openApp === null,
+    storyEnabled && sequence === null && activeCall === null,
   )
   const suho = timeline.phone.favorites.find((c) => c.id === STORY_CONVO_ID) ?? {
     id: STORY_CONVO_ID,

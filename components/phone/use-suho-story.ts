@@ -34,12 +34,12 @@ export const STORY_CHOICES = ['어. 내일 보자', '안수호'] as const
 export const FAILED_SENDS_BEFORE_PROMPT = 3
 export const FUTURE_DATE = '2025-01-01'
 
-const ARRIVAL_DELAY = 15_000
+const ARRIVAL_DELAY = 8_000
 const REWOUND_ARRIVAL_DELAY = 5_000
 const BANNER_DURATION = 8_000
 const RING_DELAY = 1_200
-const CHAR_MS = 130
-const ERASE_MS = 90
+const CHAR_MS = 105
+const ERASE_MS = 75
 const NAME_CALLS_BEFORE_FINALE = 3
 
 export const CALL_SCRIPT: CallLine[] = [
@@ -113,13 +113,13 @@ function useChatPlayer(date: string) {
       for (const step of steps) {
         if (step.delay) await sleep(step.delay)
         if (step.from === 'me') {
-          await sleep(1000)
+          await sleep(850)
           for (let i = 1; i <= step.text.length; i++) {
             if (!alive()) return false
             setDraft(step.text.slice(0, i))
             await sleep(CHAR_MS)
           }
-          await sleep(step.erase ? 900 : 500)
+          await sleep(step.erase ? 800 : 380)
           if (!alive()) return false
           if (step.erase) {
             for (let i = step.text.length - 1; i >= 0; i--) {
@@ -131,10 +131,10 @@ function useChatPlayer(date: string) {
           }
           setDraft('')
         } else {
-          await sleep(800)
+          await sleep(650)
           if (!alive()) return false
           setTyping(true)
-          await sleep(step.veryLongTyping ? 6000 : step.longTyping ? 3400 : 1500)
+          await sleep(step.veryLongTyping ? 5200 : step.longTyping ? 2900 : 1250)
           if (!alive()) return false
           setTyping(false)
         }
@@ -183,7 +183,7 @@ function useChatPlayer(date: string) {
   return { extra, typing, draft, options, start, pick, push, reset }
 }
 
-export function useSuhoStory(active: boolean, homeIdle: boolean) {
+export function useSuhoStory(active: boolean, rewoundReady: boolean) {
   const chat = useChatPlayer(STORY_DATE)
   const [stage, setStage] = useState<StoryStage>('waiting')
   const [rewound, setRewound] = useState(false)
@@ -193,7 +193,7 @@ export function useSuhoStory(active: boolean, homeIdle: boolean) {
   const { push, start } = chat
 
   useEffect(() => {
-    const ready = rewound ? homeIdle : active
+    const ready = rewound ? rewoundReady : active
     if (!ready || stage !== 'waiting') return
     const timer = setTimeout(
       () => {
@@ -204,7 +204,7 @@ export function useSuhoStory(active: boolean, homeIdle: boolean) {
       rewound ? REWOUND_ARRIVAL_DELAY : ARRIVAL_DELAY,
     )
     return () => clearTimeout(timer)
-  }, [active, homeIdle, rewound, stage, push])
+  }, [active, rewoundReady, rewound, stage, push])
 
   useEffect(() => {
     if (!bannerVisible) return
@@ -252,13 +252,12 @@ export function useSuhoStory(active: boolean, homeIdle: boolean) {
           [
             { from: 'them', text: '좀만 기다려 날아가는 중' },
             { from: 'me', text: '사랑해', erase: true },
-            { from: 'me', text: '수호야. 너도 나와 같은 마음이야?' },
-            { from: 'them', text: '시은아', delay: 1000, longTyping: true },
-            { from: 'them', text: '나 할 말이 있는데' },
+            { from: 'me', text: '안수호' },
+            { from: 'them', text: '연시은', delay: 1000, longTyping: true },
+            { from: 'them', text: '나 할 말 있는데' },
           ],
         ],
-        ['나도 할 말 있어', [{ from: 'them', text: '너 부터 말해' }]],
-        ['수호야', [{ from: 'them', text: '응' }]],
+        ['나도', [{ from: 'them', text: '뭔데? 너 먼저 말해' }]],
         ['너도 나랑 같은 생각해?', [{ from: 'them', text: '응' }]],
         [
           '미래에도 여전히?',
