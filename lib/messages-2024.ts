@@ -99,15 +99,56 @@ const BIGSTUDY: Conversation = {
     {
       from: 'them',
       date: '2024-05-20',
-      text: '[빅스터디] 2027 수능 대비 프리패스 안내\n올해 수능을 준비하는 수험생을 위한 전 과목 프리패스 특별 혜택!\n원하는 선생님의 강의를 자유롭게 수강하고 취약 과목을 집중적으로 보완하세요.\n이벤트 기간: ~ 5월 31일\n자세한 내용은 공식 홈페이지에서 확인하세요.\n무료수신거부 080-xxx-xxxx',
+      text: '[빅스터디] 2027 수능 대비 프리패스 안내\n올해 수능을 준비하는 수험생을 위한 전 과목 프리패스 특별 혜택!\n원하는 선생님의 강의를 자유롭게 수강하고 취약 과목을 집중적으로 보완하세요.\n이벤트 기간: ~ 5월 31일\n자세한 내용은 공식 홈페이지에서 확인하세요.\n무��수신거부 080-xxx-xxxx',
     },
   ],
+}
+
+const CARD_USES: [date: string, time: string, place: string, amount: number][] = [
+  ['2024-12-01', '19:15', '한솥도시락 은장고점', 7200],
+  ['2024-12-03', '19:30', '김밥천국 강남점', 8000],
+  ['2024-12-05', '19:00', 'CU 강남점', 6500],
+  ['2024-12-07', '18:20', '선강대학교병원', 3500],
+  ['2024-12-08', '19:10', '김밥천국 은장고점', 7500],
+  ['2024-12-10', '18:50', 'GS25 강남역점', 5200],
+  ['2024-12-12', '19:00', '본도시락 강남점', 9800],
+  ['2024-12-14', '17:40', '선강대학교병원', 4200],
+  ['2024-12-15', '19:20', '김밥천국 강남점', 8500],
+  ['2024-12-17', '18:30', '세븐일레븐 은장고점', 5800],
+  ['2024-12-19', '19:15', '김밥천국 은장고점', 7000],
+  ['2024-12-21', '18:00', '선강대학교병원', 2800],
+  ['2024-12-22', '19:30', '한솥도시락 강남점', 7500],
+  ['2024-12-24', '19:00', 'CU 은장고점', 6200],
+  ['2024-12-26', '18:50', '김밥천국 강남점', 8000],
+  ['2024-12-28', '17:50', '선강대학교병원', 3800],
+  ['2024-12-29', '19:10', 'GS25 은장고점', 5500],
+  ['2024-12-31', '18:30', '투썸플레이스 강남점', 36000],
+]
+
+const won = (n: number) => `${n.toLocaleString('ko-KR')}원`
+
+const NH_CARD: Conversation = {
+  id: 'nhcard',
+  name: 'NH농협카드',
+  color: '#00a651',
+  messages: (() => {
+    let total = 0
+    return CARD_USES.map(([date, time, place, amount]) => {
+      total += amount
+      const [, m, d] = date.split('-')
+      return {
+        from: 'them' as const,
+        date,
+        text: `[Web발신]\nNH카드3*2*승인\n연*은\n${won(amount)} 일시불\n${m}/${d} ${time}\n${place}\n누적${won(total)}`,
+      }
+    })
+  })(),
 }
 
 function lastDate(c: Conversation) {
   return c.messages[c.messages.length - 1]?.date ?? ''
 }
 
-export const MESSAGES_2024: Conversation[] = [SUHO, JUNTAE, SEONGJE, HUMIN, DAESUNG, BIGSTUDY].sort((a, b) =>
+export const MESSAGES_2024: Conversation[] = [SUHO, NH_CARD, JUNTAE, SEONGJE, HUMIN, DAESUNG, BIGSTUDY].sort((a, b) =>
   lastDate(b).localeCompare(lastDate(a)),
 )

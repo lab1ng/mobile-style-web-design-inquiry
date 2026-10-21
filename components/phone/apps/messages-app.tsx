@@ -60,9 +60,10 @@ export type MessagesStory = {
   draft: string
   choices: readonly string[] | null
   composable: boolean
+  unread: boolean
   onOpen: () => void
   onViewChange: (viewing: boolean) => void
-  onChoose: (index: 0 | 1) => void
+  onChoose: (index: number) => void
   onCompose: (text: string) => void
 }
 
@@ -94,7 +95,7 @@ function Composer({ story }: { story: MessagesStory }) {
             <button
               key={choice}
               type="button"
-              onClick={() => story.onChoose(i as 0 | 1)}
+              onClick={() => story.onChoose(i)}
               className="rounded-full bg-sky-500/15 px-4 py-2 text-[15px] text-sky-300 ring-1 ring-sky-500/50 active:bg-sky-500/30"
             >
               {choice}
@@ -157,7 +158,7 @@ export function MessagesApp({ timeline, story, initialOpenId }: Props) {
 
   const convo = conversations.find((c) => c.id === openId)
   const isStoryConvo = Boolean(story && convo?.id === story.convoId)
-  const unreadId = story?.extra.length === 1 ? story.convoId : null
+  const unreadId = story?.unread ? story.convoId : null
 
   const openConvo = (id: string) => {
     setOpenId(id)

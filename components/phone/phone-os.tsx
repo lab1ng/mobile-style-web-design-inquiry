@@ -6,7 +6,7 @@ import { SwipeBack } from './swipe-back'
 import { CallScreen, StoryCallScreen } from './call-screen'
 import { ConfirmDialog } from './confirm-dialog'
 import { NotificationBanner } from './notification-banner'
-import { CALL_SCRIPT, STORY_CHOICES, STORY_CONVO_ID, STORY_DATE, useSuhoStory } from './use-suho-story'
+import { CALL_SCRIPT, STORY_CONVO_ID, STORY_DATE, useFutureChat, useSuhoStory } from './use-suho-story'
 import type { PlacedCall } from './apps/phone-app'
 import { StatusBar } from './status-bar'
 import { HomeScreen } from './home-screen'
@@ -39,7 +39,10 @@ export function PhoneOS() {
   const [placedCalls, setPlacedCalls] = useState<Record<string, PlacedCall[]>>({})
 
   const [lastChance, setLastChance] = useState(false)
-  const [timelineWarning, setTimelineWarning] = useState(false)
+  const [timelineWarning, setTimelineWarning] = useState<'blocked' | 'restricted' | null>(null)
+  const [futureUnlocked, setFutureUnlocked] = useState(false)
+  const [futureDeclined, setFutureDeclined] = useState(false)
+  const future = useFutureChat(futureUnlocked)
   const [messagesKey, setMessagesKey] = useState(0)
   const [messagesFocus, setMessagesFocus] = useState<string | undefined>()
 
@@ -78,6 +81,19 @@ export function PhoneOS() {
     setMessagesKey((k) => k + 1)
     setOpenApp('messages')
   }
+
+  const launchApp = (id: AppId) => {
+    setFutureDeclined(false)
+    setOpenApp(id)
+  }
+
+  const goToFuture = () => {
+    setFutureUnlocked(true)
+    travel(TIMELINES[0].id, false)
+  }
+
+  const showFuturePrompt =
+    storyEnabled && story.stage === 'finale' && openApp === null && sequence === null && !futureDeclined
 
   const rewind = () => {
     setLastChance(false)
@@ -119,20 +135,34 @@ export function PhoneOS() {
                     extra: story.extra,
                     typing: story.typing,
                     draft: story.draft,
-                    choices: story.stage === 'choice' ? STORY_CHOICES : null,
+                    choices: story.choices,
                     composable: story.stage === 'stayed' || story.stage === 'done',
+                    unread: story.stage === 'notified',
                     onOpen: story.open,
                     onViewChange: setViewingStoryChat,
                     onChoose: story.choose,
                     onCompose: (text) => {
                       if (story.stage === 'done') {
-                        if (story.sendAfterEnding(text) === 'blocked') setTimelineWarning(true)
+                        const result = story.sendAfterEnding(text)
+                        if (result !== 'sent') setTimelineWarning(result)
                         return
                       }
                       if (story.sendFailed(text)) setLastChance(true)
                     },
                   }
-                : undefined
+                : {
+                    convoId: STORY_CONVO_ID,
+                    extra: future.extra,
+                    typing: future.typing,
+                    draft: future.draft,
+                    choices: future.choices,
+                    composable: future.composable,
+                    unread: false,
+                    onOpen: () => {},
+                    onViewChange: () => {},
+                    onChoose: future.choose,
+                    onCompose: future.send,
+                  }
             }
           />
         )
@@ -185,7 +215,7 @@ export function PhoneOS() {
         className="pointer-events-none absolute top-2.5 left-1/2 z-40 hidden h-8 w-28 -translate-x-1/2 rounded-full bg-black sm:block"
       />
 
-      <HomeScreen timeline={timeline} onOpenApp={setOpenApp} hidden={isAppOpen} />
+      <HomeScreen timeline={timeline} onOpenApp={launchApp} hidden={isAppOpen} />
 
       {isAppOpen && (
         <SwipeBack
@@ -232,12 +262,27 @@ export function PhoneOS() {
 
       {timelineWarning && (
         <ConfirmDialog
-          title="전송 불가"
-          message="시간선의 오류가 발생할 수 있습니다. 2025년의 대상자에게 직접 전하세요"
+          title={timelineWarning === 'restricted' ? '발송 제한' : '전송 불가'}
+          message={
+            timelineWarning === 'restricted'
+              ? '발송을 제한합니다. 시간선의 오류가 발생할 수 있는 단어가 포함되어 있습니다'
+              : '시간선의 오류가 발생할 수 있습니다. 2025년의 대상자에게 직접 전하세요'
+          }
           confirmLabel="확인"
           hideCancel
-          onConfirm={() => setTimelineWarning(false)}
-          onCancel={() => setTimelineWarning(false)}
+          onConfirm={() => setTimelineWarning(null)}
+          onCancel={() => setTimelineWarning(null)}
+        />
+      )}
+
+      {showFuturePrompt && (
+        <ConfirmDialog
+          title="미래로 나아가시겠습니까?"
+          message=""
+          confirmLabel="네"
+          cancelLabel="아니요"
+          onConfirm={goToFuture}
+          onCancel={() => setFutureDeclined(true)}
         />
       )}
 
@@ -265,6 +310,9 @@ export function PhoneOS() {
             setMessagesFocus(undefined)
             story.reset(rewinding && sequence.targetId === STORY_DATE)
             setRewinding(false)
+            setFutureDeclined(false)
+            if (sequence.targetId === STORY_DATE) setFutureUnlocked(false)
+            else future.reset()
           }}
           onDone={() => setSequence(null)}
         />
