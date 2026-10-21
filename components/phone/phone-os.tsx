@@ -46,7 +46,11 @@ export function PhoneOS() {
   const [messagesKey, setMessagesKey] = useState(0)
   const [messagesFocus, setMessagesFocus] = useState<string | undefined>()
 
-  const timeline = getTimeline(timelineId)
+  const baseTimeline = getTimeline(timelineId)
+  const timeline =
+    futureUnlocked && timelineId === TIMELINES[0].id
+      ? { ...baseTimeline, id: '2025-01-01', time: '7:38' }
+      : baseTimeline
   const storyEnabled = timelineId === STORY_DATE
   const [viewingStoryChat, setViewingStoryChat] = useState(false)
   const [rewinding, setRewinding] = useState(false)
