@@ -198,7 +198,7 @@ export const TIMELINES: Timeline[] = [
         { id: 'c5', name: '서준태', subtitle: '휴대전화', time: '오후 2:04', type: 'outgoing' },
         { id: 'c6', name: '박후민', subtitle: '휴대전화', time: '오전 11:40', type: 'incoming' },
         { id: 'c7', name: '고현탁', subtitle: '휴대전화', time: '어제', type: 'incoming' },
-        { id: 'c8', name: '070-876X-688X', subtitle: '대한민국', time: '어제', type: 'incoming' },
+        { id: 'c8', name: '070-876X-688X', subtitle: '대한민국', time: '���제', type: 'incoming' },
         { id: 'c9', name: '금성제', subtitle: '휴대전화', time: '일요일', type: 'missed' },
       ],
     },
@@ -251,7 +251,7 @@ export const TIMELINES: Timeline[] = [
       {
         id: 'm2',
         title: '',
-        body: 'ㅇ 맨날 잠. 공부는 죽어도 안 함\nㅇ 밥은 엄청 많이 먹음. 급식실 갈 때 안 깨우면 서운해함\nㅇ 안수호가 후드집업 가져감. 주는 거 까먹은 듯\nㅇ 내가 준 손수건\nㅇ 분홍색 토끼 베개\n- 쿠팡에서 샀다고 함. 구매 완료\nㅇ 돈 오소, 배달 알바, 상하차 …. 안 힘드나\nㅇ 신선설렁탕\n- 도가니탕 이게 그렇게 맛있나?\nㅇ 예전에 MMA 했다던데.. 왜 그만뒀지? 궁금한데 못 물어보겠다.\nㅇ 한강\n- 안수호는 생각보다 더 달리기를 잘한다. 질투 나게\nㅇ 생일 7/9',
+        body: 'ㅇ 맨날 잠. 공부는 죽어도 안 함\nㅇ 밥은 엄청 많이 먹음. 급식실 갈 때 안 깨우면 서운해함\nㅇ 안수호가 후드집업 가져감. 주는 거 까먹은 듯\nㅇ 내가 준 손수건\nㅇ 분홍색 토끼 베개\n- 쿠팡에서 샀다고 함. 구매 완료\nㅇ 돈오소, 배달 알바, 상하차 …. 안 힘드나\nㅇ 신선설농탕\n- 도가니탕 이게 그렇게 맛있나?\nㅇ 예전에 MMA 했다던데.. 왜 그만뒀지? 궁금한데 못 물어보겠다.\nㅇ 한강\n- 안수호는 생각보다 더 달리기를 잘한다. 질투 나게\nㅇ 생일 7/9',
         updated: '2022.06.17',
         passcode: '0709',
       },
