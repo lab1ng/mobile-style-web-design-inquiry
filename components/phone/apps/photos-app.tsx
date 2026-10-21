@@ -1,10 +1,10 @@
 'use client'
 
-import { Delete, EyeOff, ImageOff, Lock } from 'lucide-react'
+import { EyeOff, ImageOff, Lock } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import type { PhotoAlbum, Timeline } from '@/lib/timelines'
-import { cn } from '@/lib/utils'
+import { PasscodeScreen } from '../passcode-screen'
 import { AppBody, AppHeader, EmptyState } from '../app-shell'
 
 export function PhotosApp({ timeline }: { timeline: Timeline }) {
@@ -33,7 +33,15 @@ export function PhotosApp({ timeline }: { timeline: Timeline }) {
 
   if (album) {
     if (album.passcode && !unlocked) {
-      return <PasscodeScreen album={album} onBack={closeAlbum} onUnlock={() => setUnlocked(true)} />
+      return (
+        <PasscodeScreen
+          title={`'${album.name}' 앨범이 잠겨 있습니다`}
+          passcode={album.passcode}
+          backLabel="앨범"
+          onBack={closeAlbum}
+          onUnlock={() => setUnlocked(true)}
+        />
+      )
     }
     return <AlbumGrid album={album} onBack={closeAlbum} onOpenPhoto={setPhotoId} />
   }
@@ -123,94 +131,6 @@ function AlbumGrid({
           </>
         )}
       </AppBody>
-    </div>
-  )
-}
-
-const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'] as const
-
-function PasscodeScreen({
-  album,
-  onBack,
-  onUnlock,
-}: {
-  album: PhotoAlbum
-  onBack: () => void
-  onUnlock: () => void
-}) {
-  const [input, setInput] = useState('')
-  const [error, setError] = useState(false)
-
-  const press = (key: string) => {
-    if (key === 'del') {
-      setInput((v) => v.slice(0, -1))
-      return
-    }
-    const next = (input + key).slice(0, 4)
-    setError(false)
-    if (next.length < 4) {
-      setInput(next)
-      return
-    }
-    if (next === album.passcode) {
-      setInput('')
-      onUnlock()
-    } else {
-      setInput('')
-      setError(true)
-    }
-  }
-
-  return (
-    <div className="flex h-full flex-col animate-in fade-in duration-200">
-      <AppHeader title="" onBack={onBack} backLabel="앨범" />
-      <div className="flex flex-1 flex-col items-center justify-center gap-8 px-8 pb-10">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <Lock className="size-8 text-neutral-400" aria-hidden />
-          <p className="text-lg font-semibold">{`'${album.name}' 앨범이 잠겨 있습니다`}</p>
-          <p className={cn('h-5 text-sm', error ? 'text-red-400' : 'text-neutral-500')} role="status">
-            {error ? '암호가 올바르지 않습니다' : '암호 4자리를 입력하세요'}
-          </p>
-          <div className={cn('mt-1 flex gap-4', error && 'animate-in slide-in-from-left-2 duration-150')} aria-hidden>
-            {Array.from({ length: 4 }, (_, i) => (
-              <span
-                key={i}
-                className={cn(
-                  'size-3.5 rounded-full border border-neutral-300',
-                  i < input.length && 'bg-neutral-100',
-                )}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="grid w-full max-w-[270px] grid-cols-3 gap-x-6 gap-y-4">
-          {KEYS.map((key, i) =>
-            key === '' ? (
-              <span key={i} />
-            ) : key === 'del' ? (
-              <button
-                key={i}
-                type="button"
-                onClick={() => press('del')}
-                disabled={input.length === 0}
-                className="flex aspect-square items-center justify-center rounded-full text-neutral-300 active:bg-neutral-800 disabled:opacity-30"
-                aria-label="지우기"
-              >
-                <Delete className="size-6" />
-              </button>
-            ) : (
-              <button
-                key={i}
-                type="button"
-                onClick={() => press(key)}
-                className="flex aspect-square items-center justify-center rounded-full bg-neutral-800 text-3xl font-light active:bg-neutral-600"
-              >
-                {key}
-              </button>
-            ),
-          )}
-        </div>
-      </div>
     </div>
   )
 }

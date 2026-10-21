@@ -9,9 +9,18 @@ type Props = {
   onConfirm: () => void
   onCancel: () => void
   hideCancel?: boolean
+  cancelLabel?: string
 }
 
-export function ConfirmDialog({ title, message, confirmLabel, onConfirm, onCancel, hideCancel }: Props) {
+export function ConfirmDialog({
+  title,
+  message,
+  confirmLabel,
+  onConfirm,
+  onCancel,
+  hideCancel,
+  cancelLabel = '취소',
+}: Props) {
   const confirmRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -34,9 +43,11 @@ export function ConfirmDialog({ title, message, confirmLabel, onConfirm, onCance
           <h2 id="confirm-title" className="text-[17px] font-semibold">
             {title}
           </h2>
-          <p id="confirm-message" className="mt-1 text-sm text-neutral-300">
-            {message}
-          </p>
+          {message && (
+            <p id="confirm-message" className="mt-1 text-sm text-neutral-300">
+              {message}
+            </p>
+          )}
         </div>
         <div className={`grid border-t border-white/15 ${hideCancel ? 'grid-cols-1' : 'grid-cols-2'}`}>
           {!hideCancel && (
@@ -45,7 +56,7 @@ export function ConfirmDialog({ title, message, confirmLabel, onConfirm, onCance
               onClick={onCancel}
               className="h-12 border-r border-white/15 text-[17px] text-sky-400 active:bg-white/10"
             >
-              취소
+              {cancelLabel}
             </button>
           )}
           <button

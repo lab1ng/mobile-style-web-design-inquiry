@@ -53,7 +53,20 @@ const CLASSROOM_NIGHT_PHOTO: Photo = {
   alt: '저녁 교실에서 교복 차림으로 앉아 브이를 하는 친구 셋',
 }
 const WING_ALBUM: PhotoAlbum = { id: 'wing', name: '🪽', photos: [WING_PHOTO], passcode: '0709' }
-export type Memo = { id: string; title: string; body: string; updated: string }
+export type Memo = {
+  id: string
+  /** 비어 있으면 본문 첫 줄이 목록 제목이 됩니다 */
+  title: string
+  body: string
+  updated: string
+  /** 있으면 4자리 암호를 입력해야 열립니다 */
+  passcode?: string
+}
+export type KnowledgeArticle = {
+  question: string
+  meta: string
+  answers: { author: string; badge?: string; body: string }[]
+}
 export type Contact = { id: string; name: string; label: string }
 export type Track = { id: string; title: string; artist: string; cover: string }
 export type Call = {
@@ -99,7 +112,7 @@ export type Timeline = {
     /** 영상이 있으면 누를 때 새해 카운트다운 → 오류 → 재부팅이 시작됩니다 */
     video?: NaverVideo & { nextTimelineId: string }
     /** 검색창을 누르면 보이는 최근 검색어 (맨 위부터) */
-    searches: { term: string; date: string }[]
+    searches: { term: string; date: string; article?: KnowledgeArticle }[]
   }
   instagram: InstagramProfile
   events: CalendarEvent[]
@@ -229,7 +242,19 @@ export const TIMELINES: Timeline[] = [
         body: '1) 미역 불리기 - 10분\n2) 소고기 볶기 - 2~3분\n3) 미역 넣고 볶기 - 2~3분\n4) 물과 양념 넣기 - 다진마늘 1/2큰술, 국간장 1큰술\n5) 푹 끓이기 - 20~30분\n6) 마지막 간 맞추기\n\n파티룸 빌리기\n풍선\n파티용품',
         updated: '2022.07.08',
       },
-      { id: 'm2', title: '신선설농탕 이게 그렇게 맛있나', body: '', updated: '2022.06.17' },
+      {
+        id: 'm4',
+        title: '',
+        body: '시은씨\n왜\n배고파 뒈지겠어\n너는 뱃속에 거지가 들었냐\nㅋㅋㅋㅋㅋㅋㅋ시은아 오늘 메뉴 뭔지 모르지\n몰라. 그리고 너 핸드폰은 어디다 두고 내 걸로 장난이야\n교실에 두고 왔어- 야 어차피 영화 관심도 없잖아 너\n그래도 선생님이 핸드폰 하지 말라 했잖아\n아 이 범생이 어떡하냐? 썜도 지금 핸드폰 하자나 뭐 어때\n그건 그래\n솔직히 말해 영화 재미없지?\n응\n땡땡이 칠까\n아니\n아 시은씨 날씨가 이렇게 좋은데 어? 커튼치고 불끄고 이 교실 안에서 재미도 없는거 봐야겠어? 잠깐만 바람 좀 쐬고 오자고~ 날씨 죽이잖아\n너는 어떻게 문자로도 말이 많아?\n나 지금 먼저 나갈 테니까 1분 후에 나와',
+        updated: '2022.06.22',
+      },
+      {
+        id: 'm2',
+        title: '',
+        body: 'ㅇ 맨날 잠. 공부는 죽어도 안 함\nㅇ 밥은 엄청 많이 먹음. 급식실 갈 때 안 깨우면 서운해함\nㅇ 안수호가 후드집업 가져감. 주는 거 까먹은 듯\nㅇ 내가 준 손수건\nㅇ 분홍색 토끼 베개\n- 쿠팡에서 샀다고 함. 구매 완료\nㅇ 돈 오소, 배달 알바, 상하차 …. 안 힘드나\nㅇ 신선설렁탕\n- 도가니탕 이게 그렇게 맛있나?\nㅇ 예전에 MMA 했다던데.. 왜 그만뒀지? 궁금한데 못 물어보겠다.\nㅇ 한강\n- 안수호는 생각보다 더 달리기를 잘한다. 질투 나게\nㅇ 생일 7/9',
+        updated: '2022.06.17',
+        passcode: '0709',
+      },
       { id: 'm1', title: '사과하기', body: '', updated: '2022.06.02' },
     ],
     music: { createdAt: '', tracks: [] },
@@ -265,8 +290,23 @@ export const TIMELINES: Timeline[] = [
       ],
       searches: [
         { term: '미역국 끓이는 법', date: '07.08.' },
-        { term: '심장이 울렁거리고 뒷목이 간질거릴 때', date: '07.05.' },
-        { term: '오토바이 안전', date: '07.04.' },
+        {
+          term: '심장이 울렁거리고 뒷목이 간질거릴 때',
+          date: '07.05.',
+          article: {
+            question: '심장이 울렁거리고 뒷목이 간질거리는데 이거 무슨 병인가요?',
+            meta: '비공개 · 조회수 127 · 작성일 2022.06.30.',
+            answers: [
+              {
+                author: '내과 전문의',
+                badge: '전문의 답변',
+                body: '심장이 울렁거리거나 두근거리는 증상은 스트레스, 수면 부족, 카페인 섭취 등으로 나타날 수 있지만 부정맥이나 갑상선 질환 등 다양한 원인도 있습니다. 증상��� 반복되거나 지속된다면 내과 진료를 받아 보시는 것이 좋겠습니다. 흉통, 호흡곤란, 심한 어지럼증이나 실신이 동반된다면 즉시 응급 진료를 받으세요.',
+              },
+              { author: '익명', body: '그거 사랑 아닌가요?' },
+            ],
+          },
+        },
+        { term: '오토바이 안��', date: '07.04.' },
         { term: '친구 화해시키는 법', date: '06.29.' },
         { term: '자니 노래', date: '06.27.' },
         { term: '칼 베였을 때 치료', date: '06.07.' },
